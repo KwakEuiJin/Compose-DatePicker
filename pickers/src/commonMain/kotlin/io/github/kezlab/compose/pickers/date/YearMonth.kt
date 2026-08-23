@@ -12,7 +12,7 @@ import kotlinx.datetime.number
  * @param year Year value in 1000..9999.
  * @param month Month value in 1..12.
  */
-data class YearMonth(
+public data class YearMonth(
     val year: Int,
     val month: Int
 ) : Comparable<YearMonth> {
@@ -28,18 +28,18 @@ data class YearMonth(
     /**
      * Converts this value to a [LocalDate] using [dayOfMonth].
      */
-    fun atDay(dayOfMonth: Int = 1): LocalDate = LocalDate(year, month, dayOfMonth)
+    public fun atDay(dayOfMonth: Int = 1): LocalDate = LocalDate(year, month, dayOfMonth)
 
     override fun compareTo(other: YearMonth): Int =
         toMonthIndex().compareTo(other.toMonthIndex())
 
     internal fun toMonthIndex(): Int = year * 12 + month
 
-    companion object {
+    public companion object {
         /**
          * Creates a [YearMonth] from [date], ignoring the day value.
          */
-        fun from(date: LocalDate): YearMonth = YearMonth(
+        public fun from(date: LocalDate): YearMonth = YearMonth(
             year = date.year,
             month = date.month.number
         )

@@ -53,7 +53,7 @@ import io.github.kezlab.compose.pickers.rememberPickerItemHeight
  * @throws IllegalArgumentException if custom item lists are empty, contain duplicates, contain values outside the supported ranges, or omit the current selected year/month after year/month constraints are applied.
  */
 @Composable
-fun YearMonthPicker(
+public fun YearMonthPicker(
     modifier: Modifier = Modifier,
     pickerModifier: Modifier = Modifier,
     state: YearMonthPickerState = rememberYearMonthPickerState(),

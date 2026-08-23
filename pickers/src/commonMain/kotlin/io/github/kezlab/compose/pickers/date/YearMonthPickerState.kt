@@ -22,7 +22,7 @@ import kotlinx.datetime.number
  * @return A [YearMonthPickerState] initialized with [initialYearMonth].
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     initialYearMonth: YearMonth
 ): YearMonthPickerState {
     val rememberedInitialYearMonth = remember { initialYearMonth }
@@ -43,7 +43,7 @@ fun rememberYearMonthPickerState(
  * @throws IllegalArgumentException if [initialDate]'s year is outside the supported 1000..9999 range.
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     initialDate: LocalDate = currentDate()
 ): YearMonthPickerState {
     val rememberedInitialDate = remember { initialDate }
@@ -65,7 +65,7 @@ fun rememberYearMonthPickerState(
  * @return A [YearMonthPickerState] initialized to the closest selectable year/month.
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     items: YearMonthPickerItems,
     initialYearMonth: YearMonth
 ): YearMonthPickerState {
@@ -90,7 +90,7 @@ fun rememberYearMonthPickerState(
  * @return A [YearMonthPickerState] initialized to the closest selectable year/month.
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     items: YearMonthPickerItems,
     initialDate: LocalDate = currentDate()
 ): YearMonthPickerState {
@@ -111,7 +111,7 @@ fun rememberYearMonthPickerState(
  * @return A [YearMonthPickerState] initialized with the given year and month.
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     initialYear: Int,
     initialMonth: Int
 ): YearMonthPickerState {
@@ -131,7 +131,7 @@ fun rememberYearMonthPickerState(
  * @return A [YearMonthPickerState] initialized to the closest selectable year/month.
  */
 @Composable
-fun rememberYearMonthPickerState(
+public fun rememberYearMonthPickerState(
     items: YearMonthPickerItems,
     initialYear: Int,
     initialMonth: Int
@@ -165,14 +165,14 @@ fun rememberYearMonthPickerState(
  * @throws IllegalArgumentException if [initialYear] or [initialMonth] is outside the supported range.
  */
 @Stable
-class YearMonthPickerState(
+public class YearMonthPickerState(
     initialYear: Int,
     initialMonth: Int
 ) {
     /**
      * Creates a [YearMonthPickerState] from [initialYearMonth].
      */
-    constructor(initialYearMonth: YearMonth) : this(
+    public constructor(initialYearMonth: YearMonth) : this(
         initialYear = initialYearMonth.year,
         initialMonth = initialYearMonth.month
     )
@@ -182,7 +182,7 @@ class YearMonthPickerState(
      *
      * The day value is ignored because [YearMonthPicker] only selects year and month.
      */
-    constructor(initialDate: LocalDate) : this(YearMonth.from(initialDate))
+    public constructor(initialDate: LocalDate) : this(YearMonth.from(initialDate))
 
     init {
         require(initialYear in 1000..9999) {
@@ -199,25 +199,25 @@ class YearMonthPickerState(
     /**
      * The currently selected year.
      */
-    val selectedYear: Int
+    public val selectedYear: Int
         get() = mutableSelectedYear
 
     /**
      * The currently selected month (1-12).
      */
-    val selectedMonth: Int
+    public val selectedMonth: Int
         get() = mutableSelectedMonth
 
     /**
      * The selected year/month value.
      */
-    val selectedYearMonth: YearMonth
+    public val selectedYearMonth: YearMonth
         get() = YearMonth(selectedYear, selectedMonth)
 
     /**
      * The selected year and month represented as the first day of that month.
      */
-    val selectedMonthDate: LocalDate
+    public val selectedMonthDate: LocalDate
         get() = selectedYearMonth.atDay()
 
     /**
@@ -225,14 +225,14 @@ class YearMonthPickerState(
      *
      * @throws IllegalArgumentException if [year] or [month] is outside the supported range.
      */
-    fun selectYearMonth(year: Int, month: Int) {
+    public fun selectYearMonth(year: Int, month: Int) {
         updateYearMonth(year, month)
     }
 
     /**
      * Programmatically selects [yearMonth].
      */
-    fun selectYearMonth(yearMonth: YearMonth) {
+    public fun selectYearMonth(yearMonth: YearMonth) {
         updateYearMonth(yearMonth.year, yearMonth.month)
     }
 
@@ -242,14 +242,14 @@ class YearMonthPickerState(
      * Use this overload when app-owned state can contain values outside custom picker lists or
      * year/month bounds.
      */
-    fun selectYearMonth(yearMonth: YearMonth, items: YearMonthPickerItems) {
+    public fun selectYearMonth(yearMonth: YearMonth, items: YearMonthPickerItems) {
         selectYearMonth(items.coerceYearMonth(yearMonth))
     }
 
     /**
      * Programmatically selects the closest year/month to [year] and [month] that is allowed by [items].
      */
-    fun selectYearMonth(year: Int, month: Int, items: YearMonthPickerItems) {
+    public fun selectYearMonth(year: Int, month: Int, items: YearMonthPickerItems) {
         selectYearMonth(items.coerceYearMonth(year = year, month = month))
     }
 
@@ -279,7 +279,7 @@ class YearMonthPickerState(
      *
      * @throws IllegalArgumentException if [date]'s year is outside the supported range.
      */
-    fun selectDate(date: LocalDate) {
+    public fun selectDate(date: LocalDate) {
         selectYearMonth(YearMonth.from(date))
     }
 
@@ -288,15 +288,15 @@ class YearMonthPickerState(
      *
      * The day value is ignored because [YearMonthPicker] only selects year and month.
      */
-    fun selectDate(date: LocalDate, items: YearMonthPickerItems) {
+    public fun selectDate(date: LocalDate, items: YearMonthPickerItems) {
         selectYearMonth(YearMonth.from(date), items)
     }
 
-    companion object {
+    public companion object {
         /**
          * Saves and restores [YearMonthPickerState] across configuration changes.
          */
-        val Saver: Saver<YearMonthPickerState, Any> = listSaver(
+        public val Saver: Saver<YearMonthPickerState, Any> = listSaver(
             save = { listOf(it.selectedYear, it.selectedMonth) },
             restore = {
                 YearMonthPickerState(

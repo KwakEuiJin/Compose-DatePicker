@@ -54,7 +54,7 @@ import kotlin.time.Duration
  * have no scalar combination allowed by constraints, or do not contain the current selection.
  */
 @Composable
-fun DurationPicker(
+public fun DurationPicker(
     modifier: Modifier = Modifier,
     pickerModifier: Modifier = Modifier,
     state: DurationPickerState = rememberDurationPickerState(),

@@ -3,7 +3,7 @@ package io.github.kezlab.compose.pickers.time
 /**
  * Hour presentation used by [TimePicker] and [TimePickerState].
  */
-enum class TimeFormat {
+public enum class TimeFormat {
     /**
      * 12-hour format with an AM/PM column.
      */
@@ -18,7 +18,7 @@ enum class TimeFormat {
 /**
  * Half-day period selected by the AM/PM column of a 12-hour [TimePicker].
  */
-enum class TimePeriod {
+public enum class TimePeriod {
     /**
      * AM period (Ante Meridiem).
      */

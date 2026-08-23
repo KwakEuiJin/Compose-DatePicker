@@ -17,6 +17,10 @@ kotlin {
     abiValidation {
     }
 
+    // Every public declaration must spell out its visibility and return type, so nothing reaches
+    // the published API by defaulting to public.
+    explicitApi()
+
     jvmToolchain(17)
 
     androidTarget {

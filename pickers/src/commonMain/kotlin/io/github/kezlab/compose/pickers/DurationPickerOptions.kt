@@ -17,7 +17,7 @@ import kotlin.time.Duration.Companion.minutes
  * @throws IllegalArgumentException if a bound is not finite, non-negative, whole-minute, or the
  * lower bound is greater than the upper bound.
  */
-data class DurationPickerConstraints(
+public data class DurationPickerConstraints(
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null
 ) {
@@ -37,7 +37,7 @@ data class DurationPickerConstraints(
      *
      * @param duration The scalar duration to test.
      */
-    fun contains(duration: Duration): Boolean =
+    public fun contains(duration: Duration): Boolean =
         duration.isDurationPickerValue() &&
                 (minDuration == null || duration >= minDuration) &&
                 (maxDuration == null || duration <= maxDuration)
@@ -55,7 +55,7 @@ data class DurationPickerConstraints(
  * @param constraints Inclusive scalar duration bounds.
  * @see PickerDefaults.durationPickerItems
  */
-data class DurationPickerItems(
+public data class DurationPickerItems(
     val hourItems: List<Int>,
     val minuteItems: List<Int>,
     val constraints: DurationPickerConstraints = DurationPickerConstraints()
@@ -69,7 +69,7 @@ data class DurationPickerItems(
      *
      * @param duration The scalar duration to test.
      */
-    fun contains(duration: Duration): Boolean {
+    public fun contains(duration: Duration): Boolean {
         if (!duration.isDurationPickerValue()) return false
         val totalMinutes = duration.inWholeMinutes
         if (totalMinutes / MINUTES_PER_HOUR > Int.MAX_VALUE) return false
@@ -88,7 +88,7 @@ data class DurationPickerItems(
      * @param hours The non-negative elapsed whole-hour component.
      * @param minutes The minute-within-hour component.
      */
-    fun contains(hours: Int, minutes: Int): Boolean {
+    public fun contains(hours: Int, minutes: Int): Boolean {
         if (hours < 0 || minutes !in 0..59) return false
         return contains(durationPickerValue(hours = hours, minutes = minutes))
     }
@@ -101,7 +101,7 @@ data class DurationPickerItems(
      * @throws IllegalArgumentException if [duration] is not finite, non-negative, and aligned to a
      * whole minute, or if these item sources are invalid or contain no allowed combination.
      */
-    fun coerceDuration(duration: Duration): Duration {
+    public fun coerceDuration(duration: Duration): Duration {
         duration.requireDurationPickerValue("duration")
         requireValid()
 
@@ -135,7 +135,7 @@ data class DurationPickerItems(
      * @param minutes The requested minute-within-hour component in `0..59`.
      * @throws IllegalArgumentException if the requested parts or item sources are invalid.
      */
-    fun coerceDuration(hours: Int, minutes: Int): Duration {
+    public fun coerceDuration(hours: Int, minutes: Int): Duration {
         require(hours >= 0) { "hours must be non-negative, but was $hours." }
         require(minutes in 0..59) { "minutes must be in range [0, 59], but was $minutes." }
         return coerceDuration(durationPickerValue(hours = hours, minutes = minutes))
@@ -185,7 +185,7 @@ data class DurationPickerItems(
  * @param minute Formatting for minute-within-hour values.
  */
 @Immutable
-data class DurationPickerFormat(
+public data class DurationPickerFormat(
     val hour: PickerItemFormat<Int>,
     val minute: PickerItemFormat<Int>
 )
@@ -197,13 +197,13 @@ data class DurationPickerFormat(
  * @param minute Structural semantics for the minute-within-hour column.
  */
 @Immutable
-data class DurationPickerSemantics(
+public data class DurationPickerSemantics(
     val hour: PickerSemantics,
     val minute: PickerSemantics
 )
 
 /** Identifies a [io.github.kezlab.compose.pickers.duration.DurationPicker] column for visual ordering. */
-enum class DurationPickerColumn {
+public enum class DurationPickerColumn {
     /** Elapsed whole-hour column. */
     HOUR,
 
@@ -224,7 +224,7 @@ enum class DurationPickerColumn {
  * @see PickerDefaults.durationPickerLayout
  */
 @Immutable
-data class DurationPickerLayout(
+public data class DurationPickerLayout(
     val hourWeight: Float?,
     val minuteWeight: Float?,
     val columnOrder: ImmutableList<DurationPickerColumn> = persistentListOf(

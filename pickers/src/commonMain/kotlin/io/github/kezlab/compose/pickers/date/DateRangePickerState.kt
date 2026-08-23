@@ -19,7 +19,7 @@ import kotlinx.datetime.number
  * @param endDate The last selected date.
  * @throws IllegalArgumentException if [startDate] is after [endDate].
  */
-data class DateRange(
+public data class DateRange(
     val startDate: LocalDate,
     val endDate: LocalDate
 ) {
@@ -37,7 +37,7 @@ data class DateRange(
      * @throws IllegalArgumentException if any date part is outside its supported range, or if the
      * resulting start date is after the resulting end date.
      */
-    constructor(
+    public constructor(
         startYear: Int,
         startMonth: Int,
         startDay: Int,
@@ -73,13 +73,13 @@ data class DateRange(
     /**
      * Returns whether [date] is inside this inclusive range.
      */
-    operator fun contains(date: LocalDate): Boolean =
+    public operator fun contains(date: LocalDate): Boolean =
         date in startDate..endDate
 
     /**
      * Returns whether [range] is fully inside this inclusive range.
      */
-    operator fun contains(range: DateRange): Boolean =
+    public operator fun contains(range: DateRange): Boolean =
         range.startDate >= startDate && range.endDate <= endDate
 
     /**
@@ -88,7 +88,7 @@ data class DateRange(
      * Values outside the supported year, month, or day ranges return false. A [day] greater than the
      * maximum valid day for [year] and [month] also returns false.
      */
-    fun contains(year: Int, month: Int, day: Int): Boolean {
+    public fun contains(year: Int, month: Int, day: Int): Boolean {
         if (year !in 1000..9999 || month !in 1..12 || day < 1) return false
         if (day > daysInMonth(year, month)) return false
         return LocalDate(year = year, month = month, day = day) in this
@@ -97,14 +97,14 @@ data class DateRange(
     /**
      * Returns whether this inclusive range and [range] share at least one calendar day.
      */
-    fun overlaps(range: DateRange): Boolean =
+    public fun overlaps(range: DateRange): Boolean =
         startDate <= range.endDate && range.startDate <= endDate
 
     /**
      * Returns the inclusive overlap between this range and [range], or `null` when they do not
      * share any calendar day.
      */
-    fun intersection(range: DateRange): DateRange? {
+    public fun intersection(range: DateRange): DateRange? {
         val intersectionStart = maxOf(startDate, range.startDate)
         val intersectionEnd = minOf(endDate, range.endDate)
         return if (intersectionStart <= intersectionEnd) {
@@ -114,14 +114,14 @@ data class DateRange(
         }
     }
 
-    companion object {
+    public companion object {
         /**
          * Creates a [DateRange] from two dates, ordering them if [startDate] is after [endDate].
          *
          * This is useful when a form, preset, or restored value supplies two dates without a
          * guaranteed start/end order.
          */
-        fun ordered(startDate: LocalDate, endDate: LocalDate): DateRange =
+        public fun ordered(startDate: LocalDate, endDate: LocalDate): DateRange =
             if (startDate <= endDate) {
                 DateRange(startDate = startDate, endDate = endDate)
             } else {
@@ -134,7 +134,7 @@ data class DateRange(
          * If a day is greater than the maximum day for its year/month, it is clamped before the
          * dates are ordered.
          */
-        fun ordered(
+        public fun ordered(
             startYear: Int,
             startMonth: Int,
             startDay: Int,
@@ -159,7 +159,7 @@ data class DateRange(
  * @return A [DateRangePickerState] initialized with the requested date range.
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     initialStartDate: LocalDate = currentDate(),
     initialEndDate: LocalDate = initialStartDate
 ): DateRangePickerState {
@@ -182,7 +182,7 @@ fun rememberDateRangePickerState(
  * @return A [DateRangePickerState] initialized with [initialDateRange].
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     initialDateRange: DateRange
 ): DateRangePickerState {
     return rememberDateRangePickerState(
@@ -206,7 +206,7 @@ fun rememberDateRangePickerState(
  * @return A [DateRangePickerState] initialized with the requested date range.
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     initialStartYear: Int,
     initialStartMonth: Int,
     initialStartDay: Int,
@@ -245,7 +245,7 @@ fun rememberDateRangePickerState(
  * @return A [DateRangePickerState] initialized to the closest selectable date range.
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     items: DatePickerItems,
     initialStartDate: LocalDate = currentDate(),
     initialEndDate: LocalDate = initialStartDate
@@ -279,7 +279,7 @@ fun rememberDateRangePickerState(
  * @return A [DateRangePickerState] initialized to the closest selectable date range.
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     items: DatePickerItems,
     initialDateRange: DateRange
 ): DateRangePickerState {
@@ -308,7 +308,7 @@ fun rememberDateRangePickerState(
  * @return A [DateRangePickerState] initialized to the closest selectable date range.
  */
 @Composable
-fun rememberDateRangePickerState(
+public fun rememberDateRangePickerState(
     items: DatePickerItems,
     initialStartYear: Int,
     initialStartMonth: Int,
@@ -364,14 +364,14 @@ fun rememberDateRangePickerState(
  * @throws IllegalArgumentException if [initialStartDate] is after [initialEndDate].
  */
 @Stable
-class DateRangePickerState(
+public class DateRangePickerState(
     initialStartDate: LocalDate,
     initialEndDate: LocalDate
 ) {
     /**
      * Creates a [DateRangePickerState] from [initialDateRange].
      */
-    constructor(initialDateRange: DateRange) : this(
+    public constructor(initialDateRange: DateRange) : this(
         initialStartDate = initialDateRange.startDate,
         initialEndDate = initialDateRange.endDate
     )
@@ -381,7 +381,7 @@ class DateRangePickerState(
      *
      * If a day is greater than the maximum day for its year/month, it is clamped to that maximum.
      */
-    constructor(
+    public constructor(
         initialStartYear: Int,
         initialStartMonth: Int,
         initialStartDay: Int,
@@ -415,19 +415,19 @@ class DateRangePickerState(
     /**
      * The first selected date.
      */
-    val selectedStartDate: LocalDate
+    public val selectedStartDate: LocalDate
         get() = startDatePickerState.selectedDate
 
     /**
      * The last selected date.
      */
-    val selectedEndDate: LocalDate
+    public val selectedEndDate: LocalDate
         get() = endDatePickerState.selectedDate
 
     /**
      * The selected inclusive date range.
      */
-    val selectedDateRange: DateRange
+    public val selectedDateRange: DateRange
         get() = DateRange(selectedStartDate, selectedEndDate)
 
     /**
@@ -435,7 +435,7 @@ class DateRangePickerState(
      *
      * @throws IllegalArgumentException if [startDate] is after [endDate].
      */
-    fun selectDateRange(startDate: LocalDate, endDate: LocalDate) {
+    public fun selectDateRange(startDate: LocalDate, endDate: LocalDate) {
         require(startDate <= endDate) {
             "startDate must be on or before endDate. startDate=$startDate, endDate=$endDate. " +
                     dateRangeOrderedAdvice()
@@ -447,7 +447,7 @@ class DateRangePickerState(
     /**
      * Programmatically selects [dateRange].
      */
-    fun selectDateRange(dateRange: DateRange) {
+    public fun selectDateRange(dateRange: DateRange) {
         selectDateRange(
             startDate = dateRange.startDate,
             endDate = dateRange.endDate
@@ -461,7 +461,7 @@ class DateRangePickerState(
      *
      * @throws IllegalArgumentException if the resulting start date is after the resulting end date.
      */
-    fun selectDateRange(
+    public fun selectDateRange(
         startYear: Int,
         startMonth: Int,
         startDay: Int,
@@ -481,7 +481,7 @@ class DateRangePickerState(
      * This overload accepts unordered [startDate] and [endDate] values. Both dates are coerced by
      * [items] and then ordered before selection.
      */
-    fun selectDateRange(startDate: LocalDate, endDate: LocalDate, items: DatePickerItems) {
+    public fun selectDateRange(startDate: LocalDate, endDate: LocalDate, items: DatePickerItems) {
         val coercedRange = items.coerceDateRange(startDate = startDate, endDate = endDate)
         selectDateRange(
             startDate = coercedRange.startDate,
@@ -492,7 +492,7 @@ class DateRangePickerState(
     /**
      * Programmatically selects the closest date range to [dateRange] allowed by [items].
      */
-    fun selectDateRange(dateRange: DateRange, items: DatePickerItems) {
+    public fun selectDateRange(dateRange: DateRange, items: DatePickerItems) {
         selectDateRange(
             startDate = dateRange.startDate,
             endDate = dateRange.endDate,
@@ -506,7 +506,7 @@ class DateRangePickerState(
      * If a day is greater than the maximum day for its year/month, it is clamped before [items]
      * coercion. This overload accepts unordered resulting dates and orders them before selection.
      */
-    fun selectDateRange(
+    public fun selectDateRange(
         startYear: Int,
         startMonth: Int,
         startDay: Int,
@@ -525,7 +525,7 @@ class DateRangePickerState(
     /**
      * Programmatically selects the range start date.
      */
-    fun selectStartDate(date: LocalDate) {
+    public fun selectStartDate(date: LocalDate) {
         startDatePickerState.selectDate(date)
         if (selectedEndDate < selectedStartDate) {
             endDatePickerState.selectDate(selectedStartDate)
@@ -538,14 +538,14 @@ class DateRangePickerState(
      * If [day] is greater than the maximum day for [year] and [month], it is clamped to that
      * maximum.
      */
-    fun selectStartDate(year: Int, month: Int, day: Int) {
+    public fun selectStartDate(year: Int, month: Int, day: Int) {
         selectStartDate(dateFromParts(year = year, month = month, day = day))
     }
 
     /**
      * Programmatically selects the closest range start date allowed by [items].
      */
-    fun selectStartDate(date: LocalDate, items: DatePickerItems) {
+    public fun selectStartDate(date: LocalDate, items: DatePickerItems) {
         selectStartDate(items.coerceDate(date))
     }
 
@@ -553,14 +553,14 @@ class DateRangePickerState(
      * Programmatically selects the closest range start date to [year], [month], and [day] allowed by
      * [items].
      */
-    fun selectStartDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
+    public fun selectStartDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
         selectStartDate(dateFromParts(year = year, month = month, day = day), items)
     }
 
     /**
      * Programmatically selects the range end date.
      */
-    fun selectEndDate(date: LocalDate) {
+    public fun selectEndDate(date: LocalDate) {
         endDatePickerState.selectDate(date)
         if (selectedStartDate > selectedEndDate) {
             startDatePickerState.selectDate(selectedEndDate)
@@ -573,14 +573,14 @@ class DateRangePickerState(
      * If [day] is greater than the maximum day for [year] and [month], it is clamped to that
      * maximum.
      */
-    fun selectEndDate(year: Int, month: Int, day: Int) {
+    public fun selectEndDate(year: Int, month: Int, day: Int) {
         selectEndDate(dateFromParts(year = year, month = month, day = day))
     }
 
     /**
      * Programmatically selects the closest range end date allowed by [items].
      */
-    fun selectEndDate(date: LocalDate, items: DatePickerItems) {
+    public fun selectEndDate(date: LocalDate, items: DatePickerItems) {
         selectEndDate(items.coerceDate(date))
     }
 
@@ -588,15 +588,15 @@ class DateRangePickerState(
      * Programmatically selects the closest range end date to [year], [month], and [day] allowed by
      * [items].
      */
-    fun selectEndDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
+    public fun selectEndDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
         selectEndDate(dateFromParts(year = year, month = month, day = day), items)
     }
 
-    companion object {
+    public companion object {
         /**
          * Saves and restores [DateRangePickerState] across configuration changes.
          */
-        val Saver: Saver<DateRangePickerState, Any> = listSaver(
+        public val Saver: Saver<DateRangePickerState, Any> = listSaver(
             save = {
                 listOf(
                     it.selectedStartDate.year,

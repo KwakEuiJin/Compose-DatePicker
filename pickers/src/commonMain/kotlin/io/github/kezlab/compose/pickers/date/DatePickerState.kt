@@ -23,7 +23,7 @@ import kotlinx.datetime.number
  * @return A [DatePickerState] initialized with [initialDate].
  */
 @Composable
-fun rememberDatePickerState(
+public fun rememberDatePickerState(
     initialDate: LocalDate = currentDate()
 ): DatePickerState {
     val rememberedInitialDate = remember { initialDate }
@@ -50,7 +50,7 @@ fun rememberDatePickerState(
  * allowed by their constraints.
  */
 @Composable
-fun rememberDatePickerState(
+public fun rememberDatePickerState(
     items: DatePickerItems,
     initialDate: LocalDate = currentDate()
 ): DatePickerState {
@@ -81,7 +81,7 @@ fun rememberDatePickerState(
  * the configured item lists are invalid or contain no date allowed by their constraints.
  */
 @Composable
-fun rememberDatePickerState(
+public fun rememberDatePickerState(
     items: DatePickerItems,
     initialYear: Int,
     initialMonth: Int,
@@ -134,7 +134,7 @@ private fun datePickerStateSaver(items: DatePickerItems): Saver<DatePickerState,
  * @return A [DatePickerState] initialized with the given date values.
  */
 @Composable
-fun rememberDatePickerState(
+public fun rememberDatePickerState(
     initialYear: Int,
     initialMonth: Int,
     initialDay: Int
@@ -162,7 +162,7 @@ fun rememberDatePickerState(
  * range, or if [initialDay] is less than 1.
  */
 @Stable
-class DatePickerState(
+public class DatePickerState(
     initialYear: Int,
     initialMonth: Int,
     initialDay: Int
@@ -170,7 +170,7 @@ class DatePickerState(
     /**
      * Creates a [DatePickerState] from [initialDate].
      */
-    constructor(initialDate: LocalDate) : this(
+    public constructor(initialDate: LocalDate) : this(
         initialYear = initialDate.year,
         initialMonth = initialDate.month.number,
         initialDay = initialDate.day
@@ -197,25 +197,25 @@ class DatePickerState(
     /**
      * The currently selected year.
      */
-    val selectedYear: Int
+    public val selectedYear: Int
         get() = mutableSelectedYear
 
     /**
      * The currently selected month (1-12).
      */
-    val selectedMonth: Int
+    public val selectedMonth: Int
         get() = mutableSelectedMonth
 
     /**
      * The currently selected day (1-31).
      */
-    val selectedDay: Int
+    public val selectedDay: Int
         get() = mutableSelectedDay
 
     /**
      * The currently selected date.
      */
-    val selectedDate: LocalDate
+    public val selectedDate: LocalDate
         get() = LocalDate(selectedYear, selectedMonth, selectedDay)
 
     /**
@@ -225,7 +225,7 @@ class DatePickerState(
      *
      * @throws IllegalArgumentException if [date]'s year is outside the supported range.
      */
-    fun selectDate(date: LocalDate) {
+    public fun selectDate(date: LocalDate) {
         updateDate(
             year = date.year,
             month = date.month.number,
@@ -242,7 +242,7 @@ class DatePickerState(
      * @throws IllegalArgumentException if [year] or [month] is outside the supported range, or if
      * [day] is less than 1.
      */
-    fun selectDate(year: Int, month: Int, day: Int) {
+    public fun selectDate(year: Int, month: Int, day: Int) {
         updateDate(year = year, month = month, day = day)
     }
 
@@ -251,7 +251,7 @@ class DatePickerState(
      *
      * Use this overload when app-owned state can contain values outside custom picker lists or date bounds.
      */
-    fun selectDate(date: LocalDate, items: DatePickerItems) {
+    public fun selectDate(date: LocalDate, items: DatePickerItems) {
         selectDate(items.coerceDate(date))
     }
 
@@ -261,7 +261,7 @@ class DatePickerState(
      * If [day] is greater than the maximum day for [year] and [month], it is clamped before applying
      * [items].
      */
-    fun selectDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
+    public fun selectDate(year: Int, month: Int, day: Int, items: DatePickerItems) {
         selectDate(items.coerceDate(year = year, month = month, day = day))
     }
 
@@ -269,7 +269,7 @@ class DatePickerState(
      * The currently valid maximum day for the selected year and month.
      * Calculated dynamically based on the selected year and month.
      */
-    val maxDay: Int
+    public val maxDay: Int
         get() = daysInMonth(selectedYear, selectedMonth)
 
     private fun updateDate(year: Int, month: Int, day: Int) {
@@ -298,11 +298,11 @@ class DatePickerState(
         )
     }
 
-    companion object {
+    public companion object {
         /**
          * Saves and restores [DatePickerState] across configuration changes.
          */
-        val Saver: Saver<DatePickerState, Any> = listSaver(
+        public val Saver: Saver<DatePickerState, Any> = listSaver(
             save = { listOf(it.selectedYear, it.selectedMonth, it.selectedDay) },
             restore = {
                 DatePickerState(

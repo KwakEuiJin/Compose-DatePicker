@@ -107,14 +107,14 @@ internal fun <T : Any> pickerItemHeightTexts(
  * @property textStyle The default interpolated text style for this item.
  * @property contentColor The default interpolated content color for this item.
  */
-class PickerItemScope<T : Any> internal constructor(
-    val item: T,
-    val text: String,
-    val isSelected: Boolean,
-    val isEnabled: Boolean,
-    val distanceFraction: Float,
-    val textStyle: TextStyle,
-    val contentColor: Color
+public class PickerItemScope<T : Any> internal constructor(
+    public val item: T,
+    public val text: String,
+    public val isSelected: Boolean,
+    public val isEnabled: Boolean,
+    public val distanceFraction: Float,
+    public val textStyle: TextStyle,
+    public val contentColor: Color
 )
 
 @Composable
@@ -244,7 +244,7 @@ internal fun <T : Any> Picker(
  * @param content Optional custom content composable for rendering each item.
  */
 @Composable
-fun <T : Any> WheelPicker(
+public fun <T : Any> WheelPicker(
     items: List<T>,
     selectedItem: T,
     onSelectedItemChange: (T) -> Unit,

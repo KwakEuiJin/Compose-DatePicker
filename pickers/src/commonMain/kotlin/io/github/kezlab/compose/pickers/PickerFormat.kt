@@ -16,7 +16,7 @@ import io.github.kezlab.compose.pickers.time.TimePeriod
  * @see PickerDefaults.itemFormat
  */
 @Immutable
-data class PickerItemFormat<T : Any>(
+public data class PickerItemFormat<T : Any>(
     val itemText: (T) -> String = { it.toString() },
     val itemContentDescription: ((T) -> String)? = null
 )
@@ -30,7 +30,7 @@ data class PickerItemFormat<T : Any>(
  * @see PickerDefaults.timePickerFormat
  */
 @Immutable
-data class TimePickerFormat(
+public data class TimePickerFormat(
     val hour: PickerItemFormat<Int>,
     val minute: PickerItemFormat<Int>,
     val period: PickerItemFormat<TimePeriod>
@@ -45,7 +45,7 @@ data class TimePickerFormat(
  * @see PickerDefaults.datePickerFormat
  */
 @Immutable
-data class DatePickerFormat(
+public data class DatePickerFormat(
     val year: PickerItemFormat<Int>,
     val month: PickerItemFormat<Int>,
     val day: PickerItemFormat<Int>
@@ -59,7 +59,7 @@ data class DatePickerFormat(
  * @see PickerDefaults.yearMonthPickerFormat
  */
 @Immutable
-data class YearMonthPickerFormat(
+public data class YearMonthPickerFormat(
     val year: PickerItemFormat<Int>,
     val month: PickerItemFormat<Int>
 )

@@ -18,7 +18,7 @@ import kotlinx.datetime.toLocalDateTime
  * zone; pass an explicit zone when the picker represents time in a fixed or user-selected zone.
  * @return The current [LocalDateTime] in [timeZone].
  */
-fun currentDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime =
+public fun currentDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime =
     Clock.System.now().toLocalDateTime(timeZone)
 
 /**
@@ -28,5 +28,5 @@ fun currentDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): Local
  * zone; pass an explicit zone when the picker represents dates in a fixed or user-selected zone.
  * @return The current [LocalDate] in [timeZone].
  */
-fun currentDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
+public fun currentDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
     currentDateTime(timeZone).date

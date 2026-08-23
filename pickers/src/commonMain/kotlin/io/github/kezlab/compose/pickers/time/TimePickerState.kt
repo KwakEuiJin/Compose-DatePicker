@@ -29,7 +29,7 @@ import kotlinx.datetime.LocalTime
  * @return A [TimePickerState] initialized with the given time values.
  */
 @Composable
-fun rememberTimePickerState(
+public fun rememberTimePickerState(
     initialHour: Int,
     initialMinute: Int,
     initialPeriod: TimePeriod = if (initialHour >= 12) TimePeriod.PM else TimePeriod.AM,
@@ -66,7 +66,7 @@ fun rememberTimePickerState(
  * @return A [TimePickerState] initialized from [initialTime].
  */
 @Composable
-fun rememberTimePickerState(
+public fun rememberTimePickerState(
     initialTime: LocalTime = currentDateTime().time,
     timeFormat: TimeFormat = TimeFormat.HOUR_24
 ): TimePickerState {
@@ -94,7 +94,7 @@ fun rememberTimePickerState(
  * no time allowed by their constraints.
  */
 @Composable
-fun rememberTimePickerState(
+public fun rememberTimePickerState(
     items: TimePickerItems,
     initialTime: LocalTime = currentDateTime().time,
     timeFormat: TimeFormat = TimeFormat.HOUR_24
@@ -136,7 +136,7 @@ fun rememberTimePickerState(
  * their constraints.
  */
 @Composable
-fun rememberTimePickerState(
+public fun rememberTimePickerState(
     items: TimePickerItems,
     initialHour: Int,
     initialMinute: Int,
@@ -244,11 +244,11 @@ private fun timePickerStateSaver(
  * @param timeFormat The time format (12-hour or 24-hour).
  */
 @Stable
-class TimePickerState(
+public class TimePickerState(
     initialHour: Int,
     initialMinute: Int,
     initialPeriod: TimePeriod,
-    val timeFormat: TimeFormat
+    public val timeFormat: TimeFormat
 ) {
     /**
      * Creates a [TimePickerState] from a [LocalTime].
@@ -256,7 +256,7 @@ class TimePickerState(
      * When [timeFormat] is [TimeFormat.HOUR_12], the hour is converted to the format-hour range
      * and the AM/PM period is derived from [initialTime].
      */
-    constructor(
+    public constructor(
         initialTime: LocalTime,
         timeFormat: TimeFormat = TimeFormat.HOUR_24
     ) : this(
@@ -285,26 +285,26 @@ class TimePickerState(
      * The currently selected hour.
      * For 12-hour format: 1-12, for 24-hour format: 0-23.
      */
-    val selectedHour: Int
+    public val selectedHour: Int
         get() = mutableSelectedHour
 
     /**
      * The currently selected minute (0-59).
      */
-    val selectedMinute: Int
+    public val selectedMinute: Int
         get() = mutableSelectedMinute
 
     /**
      * The currently selected period (AM/PM).
      * Only relevant when using 12-hour format.
      */
-    val selectedPeriod: TimePeriod
+    public val selectedPeriod: TimePeriod
         get() = mutableSelectedPeriod
 
     /**
      * The selected hour converted to 24-hour clock time (0-23).
      */
-    val selectedHourOfDay: Int
+    public val selectedHourOfDay: Int
         get() = when (timeFormat) {
             TimeFormat.HOUR_24 -> selectedHour
             TimeFormat.HOUR_12 -> when {
@@ -317,7 +317,7 @@ class TimePickerState(
     /**
      * The selected time represented as [LocalTime].
      */
-    val selectedTime: LocalTime
+    public val selectedTime: LocalTime
         get() = LocalTime(selectedHourOfDay, selectedMinute)
 
     /**
@@ -327,7 +327,7 @@ class TimePickerState(
      * [time]. In 24-hour mode, [selectedPeriod] is still updated for consistency but is not formatted by
      * [TimePicker]. The hour, minute, and period fields are applied together as one logical state update.
      */
-    fun selectTime(time: LocalTime) {
+    public fun selectTime(time: LocalTime) {
         Snapshot.withMutableSnapshot {
             mutableSelectedHour = initialHourForTimeFormat(time.hour, timeFormat)
             mutableSelectedMinute = time.minute
@@ -343,7 +343,7 @@ class TimePickerState(
      *
      * @throws IllegalArgumentException if [hour] or [minute] is outside the supported range.
      */
-    fun selectTime(hour: Int, minute: Int) {
+    public fun selectTime(hour: Int, minute: Int) {
         selectTime(LocalTime(hour = hour, minute = minute))
     }
 
@@ -356,7 +356,7 @@ class TimePickerState(
      *
      * @throws IllegalArgumentException if [displayHour] or [minute] is outside the supported range.
      */
-    fun selectTime(displayHour: Int, minute: Int, period: TimePeriod) {
+    public fun selectTime(displayHour: Int, minute: Int, period: TimePeriod) {
         selectTime(displayTimeFromParts(displayHour = displayHour, minute = minute, period = period))
     }
 
@@ -366,7 +366,7 @@ class TimePickerState(
      * Use this overload when app-owned state can contain values outside custom picker lists or
      * time bounds.
      */
-    fun selectTime(time: LocalTime, items: TimePickerItems) {
+    public fun selectTime(time: LocalTime, items: TimePickerItems) {
         selectTime(items.coerceTime(time = time, timeFormat = timeFormat))
     }
 
@@ -375,7 +375,7 @@ class TimePickerState(
      *
      * [hour] is interpreted as hour-of-day in `0..23`.
      */
-    fun selectTime(hour: Int, minute: Int, items: TimePickerItems) {
+    public fun selectTime(hour: Int, minute: Int, items: TimePickerItems) {
         selectTime(LocalTime(hour = hour, minute = minute), items)
     }
 
@@ -385,15 +385,15 @@ class TimePickerState(
      * [displayHour] is interpreted as the format-hour shown to users in `1..12`; [period] supplies
      * AM/PM.
      */
-    fun selectTime(displayHour: Int, minute: Int, period: TimePeriod, items: TimePickerItems) {
+    public fun selectTime(displayHour: Int, minute: Int, period: TimePeriod, items: TimePickerItems) {
         selectTime(items.coerceTime(displayHour = displayHour, minute = minute, period = period))
     }
 
-    companion object {
+    public companion object {
         /**
          * Saves and restores [TimePickerState] across configuration changes.
          */
-        val Saver: Saver<TimePickerState, Any> = listSaver(
+        public val Saver: Saver<TimePickerState, Any> = listSaver(
             save = {
                 listOf(
                     it.selectedHour,

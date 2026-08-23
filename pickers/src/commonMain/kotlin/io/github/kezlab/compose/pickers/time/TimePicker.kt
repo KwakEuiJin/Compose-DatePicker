@@ -59,7 +59,7 @@ import kotlinx.datetime.LocalTime
  * @throws IllegalArgumentException if custom item lists are empty where required, contain duplicates, contain values outside the supported ranges, or omit the current selected value after time constraints are applied.
  */
 @Composable
-fun TimePicker(
+public fun TimePicker(
     modifier: Modifier = Modifier,
     pickerModifier: Modifier = Modifier,
     state: TimePickerState = rememberTimePickerState(),
