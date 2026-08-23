@@ -3,6 +3,8 @@ name: PR verification
 # The full multiplatform/emulator matrix lives in integration-build-test.yml and stays manual
 # because it is too slow to run on every push. This workflow is the fast subset that must never
 # regress: diff hygiene, the tests that run without an emulator, and the public API gate.
+# Compose screenshot validation is the other automatic PR check and lives in screenshot-test.yml,
+# which needs a macOS runner.
 
 on:
   pull_request:
@@ -35,7 +37,7 @@ jobs:
           git diff --check "origin/${{ github.base_ref }}...HEAD"
 
   tests:
-    name: Linux • Unit, Robolectric and screenshot tests
+    name: Linux • Unit and Robolectric tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -57,16 +59,18 @@ jobs:
       - name: Install Android build tools
         run: |
           sdkmanager "platform-tools" \
-                     "platforms;android-37" \
+                     "platforms;android-37.0" \
                      "build-tools;37.0.0"
           yes | sdkmanager --licenses
 
-      - name: Gradle Test • Desktop, Robolectric, screenshots
+      # Screenshot validation is not here: it runs in screenshot-test.yml, which uses a macOS
+      # runner because the reference images only reproduce on a host that renders like the one
+      # that recorded them. See docs/testing/compose-screenshot-tests.md.
+      - name: Gradle Test • Desktop and Robolectric
         run: |
           ./gradlew \
             ${{ env.LIBRARY_MODULE }}:desktopTest \
             ${{ env.LIBRARY_MODULE }}:testDebugUnitTest \
-            :screenshot-tests:validateDebugScreenshotTest \
             ${{ env.SAMPLE_MODULE }}:compileDebugKotlinAndroid \
             --no-daemon
 
@@ -75,9 +79,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pr-test-reports
-          path: |
-            pickers/build/reports/tests/**
-            screenshot-tests/build/reports/screenshotTest/**
+          path: pickers/build/reports/tests/**
           if-no-files-found: ignore
 
   public-api:
@@ -104,7 +106,7 @@ jobs:
       - name: Install Android build tools
         run: |
           sdkmanager "platform-tools" \
-                     "platforms;android-37" \
+                     "platforms;android-37.0" \
                      "build-tools;37.0.0"
           yes | sdkmanager --licenses
 

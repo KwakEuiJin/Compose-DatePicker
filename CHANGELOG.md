@@ -63,10 +63,12 @@ This project tracks notable user-facing and maintainer-facing changes here. The 
   published to GitHub Pages under [`/api/`](https://kez-lab.org/Compose-Pickers/api/) alongside the
   Wasm demo. Previously the jar held nothing but a manifest.
 - `pr-verification.yml` runs the fast verification subset on every pull request: diff hygiene,
-  `:pickers:desktopTest`, `:pickers:testDebugUnitTest`,
-  `:screenshot-tests:validateDebugScreenshotTest`, `:sample:compileDebugKotlinAndroid`, and
-  `:pickers:checkKotlinAbi`. Hosted PR automation had been disabled entirely, which meant a public
-  API change could merge without the ABI gate running.
+  `:pickers:desktopTest`, `:pickers:testDebugUnitTest`, `:sample:compileDebugKotlinAndroid`, and
+  `:pickers:checkKotlinAbi`. Apart from `screenshot-test.yml`, hosted PR automation was disabled,
+  which meant a public API change could merge without the ABI gate running. Screenshot validation
+  stays in `screenshot-test.yml` on its macOS runner; `docs/testing/compose-screenshot-tests.md`
+  now records the measurements showing why it cannot move to a Linux runner and why raising
+  `imageDifferenceThreshold` is not an alternative.
 - [`docs/product/api-stability-policy.md`](docs/product/api-stability-policy.md) states what counts
   as public API, what `0.x` versus `1.0.0` promises, and which platform and toolchain changes are
   treated as breaking.
