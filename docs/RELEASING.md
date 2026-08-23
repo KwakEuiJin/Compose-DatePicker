@@ -12,12 +12,25 @@
 
    ```bash
    git diff --check origin/main...HEAD
-   ./gradlew :pickers:check :pickers:checkLegacyAbi --no-daemon
+   ./gradlew :pickers:check :pickers:checkKotlinAbi --no-daemon
+   ./gradlew :screenshot-tests:validateDebugScreenshotTest --no-daemon
    ./gradlew :pickers:publishToMavenLocal --no-daemon
    ```
 
    샘플을 바꾼 릴리스라면 `:sample:compileKotlinDesktop`,
    `:sample:wasmJsBrowserDistribution`, `:sample:assembleDebugAndroidTest`도 실행한다.
+
+   공개 API를 바꾼 릴리스라면 `pickers/api/` dump가 갱신·리뷰됐는지, 그리고 breaking change에
+   대응하는 `docs/migration/` 문서가 있는지 확인한다. 무엇을 공개 API로 보는지는
+   [product/api-stability-policy.md](product/api-stability-policy.md)에 있다.
+
+   `publishToMavenLocal` 뒤에는 생성된 POM의 `dependencies`를 확인해서 debug 전용 의존성이
+   섞여 들어가지 않았는지 본다.
+
+   ```bash
+   sed -n '/<dependencies>/,/<\/dependencies>/p' \
+     ~/.m2/repository/io/github/kez-lab/compose-pickers-android/<version>/compose-pickers-android-<version>.pom
+   ```
 
 3. 현재 `VERSION_NAME`과 같은 형식의 annotated tag를 만든다. 이 프로젝트의 새 릴리스
    형식은 `0.7.0`처럼 `v` 접두사가 없는 숫자 버전이다.

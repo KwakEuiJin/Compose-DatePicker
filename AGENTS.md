@@ -17,17 +17,22 @@ Compose-Pickers (formerly Compose-DateTimePicker) is a Kotlin Multiplatform libr
 
 ### Component Hierarchy
 
-The library follows a **composition-based architecture** with a single generic `Picker<T>` component as the foundation:
+The library follows a **composition-based architecture** with a single generic wheel component as the foundation:
 
 ```
-Picker<T> (generic scrollable picker)
-  ↓ composed into
-TimePicker (hour + minute + optional AM/PM)
-YearMonthPicker (year + month)
-DatePicker (year + month + day)
+PickerImpl (private rendering + interaction core)
+  ├─ WheelPicker<T>  (public: live onSelectedItemChange + onSelectionSettled)
+  └─ Picker<T>       (internal: settled-only, used by the composite pickers)
+       ↓ composed into
+     TimePicker (hour + minute + optional AM/PM)
+     YearMonthPicker (year + month)
+     DatePicker (year + month + day)
+     DateRangePicker, DurationPicker
 ```
 
-**Key pattern**: Higher-level components (`TimePicker`, `YearMonthPicker`) are compositions of multiple controlled `Picker` instances, not subclasses. Generic `Picker<T>` receives `selectedItem` and `onSelectedItemChange` from the caller; higher-level state classes own only logical date/time values.
+**Key pattern**: Higher-level components (`TimePicker`, `YearMonthPicker`) are compositions of multiple controlled picker instances, not subclasses. The generic picker receives `selectedItem` and a selection callback from the caller; higher-level state classes own only logical date/time values.
+
+`Picker` is deliberately `internal`: composite pickers rebuild dependent columns from one logical selection, so they must not observe a value that is still moving. Apps get the same contract from `WheelPicker` by leaving `onSelectedItemChange` empty and handling `onSelectionSettled`. Do not re-expose `Picker`.
 
 ### Core Components
 
@@ -71,15 +76,13 @@ User scrolls LazyColumn
 
 ```
 pickers/src/
-├── commonMain/kotlin/    # Shared UI and logic
-├── androidMain/          # Android-specific (UI tooling preview)
-├── iosMain/              # iOS-specific (currently minimal)
-├── desktopMain/          # Desktop-specific (currently minimal)
-├── jsMain/               # Web-specific source set directory, currently minimal
-└── commonTest/           # Shared unit tests
+├── commonMain/kotlin/    # Shared UI and logic - all of it
+├── androidMain/          # AndroidManifest.xml only, no Kotlin sources
+├── commonTest/           # Shared unit tests
+└── androidUnitTest/      # Robolectric component UI tests
 ```
 
-Most logic lives in `commonMain`. Platform-specific code is minimal.
+All logic lives in `commonMain`, including the `@Preview` composables, which compile against the multiplatform `ui-tooling-preview`. There is no platform-specific Kotlin code, so `iosMain`, `desktopMain`, and `jsMain` were removed in `0.8.0`. Add a platform source set back only when it holds an actual `actual` declaration.
 
 ## Development Commands
 
@@ -122,6 +125,12 @@ Most logic lives in `commonMain`. Platform-specific code is minimal.
 - When higher-level components pass semantics labels to `Picker`, expose them through component-specific semantics option objects with sensible defaults so Android apps can localize TalkBack output. Update KDoc and both READMEs in the same PR.
 - Kotlin 2.4.10 ABI validation uses `checkKotlinAbi`/`updateKotlinAbi` in this repo. The former `checkLegacyAbi`/`updateLegacyAbi` names still resolve but are deprecated aliases. Also note the DSL change: `abiValidation { }` now enables validation on its own and the `enabled` property was removed. Re-check task names and dump format after Kotlin upgrades.
 - The build runs AGP 9 in compatibility mode: `android.builtInKotlin=false` and `android.newDsl=false` in `gradle.properties`. Both are required because AGP 9 forbids `org.jetbrains.kotlin.multiplatform` together with `com.android.library`/`com.android.application`, which is how `:pickers` and `:sample` are structured, and `org.jetbrains.kotlin.android` (used by `:benchmark`/`:benchmark-app`) is incompatible with the new DSL. AGP 10 removes both flags, so revisit when KMP supports the AGP 9 DSL — `:pickers` would move to `com.android.kotlin.multiplatform.library` and the Android app part of `:sample` would need its own non-KMP subproject.
+- `:pickers` uses Kotlin explicit API mode. New public declarations must spell out `public` and their return type; do not disable the mode to avoid writing them.
+- Keep the published API surface to what apps actually call. Before adding a public symbol, check that it is not an internal default (like the former `*_RANGE` lists), a generated artifact (like the Compose resources `Res` class), or a helper with no caller. The `util` package was removed in `0.8.0` for exactly these reasons; do not reintroduce a catch-all package.
+- Time-reading helpers must take an explicit `timeZone` parameter defaulting to `TimeZone.currentSystemDefault()` rather than hard-coding the system zone.
+- Dependencies that must not reach consumers of the release artifact go in `debugImplementation`, not in `androidMain`. After changing dependencies, run `:pickers:publishToMavenLocal` and read the generated POM's `dependencies` block before assuming the change is contained.
+- `compose-material3` is a deliberate transitive dependency: `PickerDefaults` reads `LocalContentColor` and `LocalTextStyle` so defaults follow the host `MaterialTheme`, and foundation has no replacement. Removing it would break dark-theme defaults. Use `BasicText` rather than material3 `Text` wherever the picker has already resolved style and color.
+- Record what the library promises about API stability in `docs/product/api-stability-policy.md`, and give every breaking release a migration document under `docs/migration/`.
 - Treat `pickers/api/` as committed release-gate data. Public API changes must include reviewed ABI dump updates, and reviewers should separate intended picker/state API changes from preview/generated resource churn.
 - Keep `@Preview` composables private tooling code so sample previews do not become part of the supported public API surface. Reject ABI dump changes that add `*Preview` symbols back to `pickers/api/`. If accidental preview symbols are removed from ABI dumps, call out the compatibility impact in the PR and release notes.
 - Distinguish the latest public Maven Central/GitHub Release version from the repository `VERSION_NAME`. Before changing README install snippets, verify the public release and do not point copy-paste dependency examples at unpublished versions unless the docs explicitly mark them as unreleased/local-publish usage.
@@ -185,6 +194,9 @@ git diff --check origin/main...HEAD
 
 # Update the Kotlin ABI reference dump after an intentional public API change
 ./gradlew :pickers:updateKotlinAbi --no-daemon
+
+# Generate the Dokka API reference (also fills the published javadoc jar)
+./gradlew :pickers:dokkaGeneratePublicationHtml --no-daemon
 
 # Verify sample app compilation
 ./gradlew :sample:compileKotlinDesktop --no-daemon

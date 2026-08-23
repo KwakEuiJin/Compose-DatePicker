@@ -85,7 +85,8 @@ callback을 발생시키지 않습니다. 접근성 semantics(column label, 현�
 ```
 
 같은 앱이 `main`에 푸시될 때마다 [GitHub Pages](https://kez-lab.org/Compose-Pickers/)에 배포되므로, 아무것도 빌드하지 않고
-바로 사용해 볼 수 있습니다.
+바로 사용해 볼 수 있습니다. 같은 빌드에서 생성되는
+[API 레퍼런스](https://kez-lab.org/Compose-Pickers/api/)도 함께 배포됩니다.
 
 <p align="center">
   <img src="docs/images/sample/sample-duration-picker.png" alt="DurationPicker 샘플 화면" width="23%" />
@@ -119,9 +120,31 @@ dependencies {
 }
 ```
 
-> **릴리스 상태:** `main`의 예제는 아직 배포되지 않은 `0.8.0` API를 기준으로 합니다. 모든 Kotlin import가 `com.kez.picker`에서 `io.github.kezlab.compose.pickers`로 바뀌며 호환 계층은 제공하지 않습니다. 현재 배포된 최신 artifact는 이전 import를 사용하는 `io.github.kez-lab:compose-pickers:0.7.0`입니다. 해당 릴리스와 정확히 일치하는 문서가 필요하면 `0.7.0` tag를 사용하세요.
+> **릴리스 상태:** `main`의 예제는 아직 배포되지 않은 `0.8.0` API를 기준으로 합니다. `0.8.0`은 호환
+> 계층이 없는 breaking 릴리스입니다. 모든 Kotlin import가 `com.kez.picker`에서
+> `io.github.kezlab.compose.pickers`로 바뀌고, generic `Picker` composable이 `WheelPicker`로
+> 대체되며, `util` 패키지가 사라집니다. 현재 배포된 최신 artifact는
+> `io.github.kez-lab:compose-pickers:0.7.0`입니다. 해당 릴리스와 정확히 일치하는 문서가 필요하면
+> `0.7.0` tag를 사용하고, `0.8.0`을 먼저 시험해 보려면 `./gradlew :pickers:publishToMavenLocal`을
+> 사용하세요.
 
-릴리스 노트와 업그레이드 영향은 영문 [CHANGELOG.md](CHANGELOG.md)를 참고하세요.
+[0.7.0에서 마이그레이션](docs/migration/0.7-to-0.8.md)에 모든 rename과 적용 절차를 정리했습니다.
+릴리스 노트와 업그레이드 영향은 영문 [CHANGELOG.md](CHANGELOG.md)를, API 안정성 약속은
+[docs/product/api-stability-policy.md](docs/product/api-stability-policy.md)를 참고하세요.
+
+### 의존성
+
+이 artifact는 Compose runtime, foundation, UI와 `kotlinx-datetime`, `kotlinx-collections-immutable`을
+`api` 의존성으로 노출합니다. `LocalDate`, `LocalTime`, `Duration`, `ImmutableList`가 공개 API에
+나타나기 때문입니다.
+
+**`compose-material3`**도 전이 의존성으로 함께 따라옵니다. 공개 API에 material3 타입이 등장하지는
+않지만, `PickerDefaults.colors(...)`와 `PickerDefaults.textStyles(...)`가 material3의
+`LocalContentColor`와 `LocalTextStyle`을 읽습니다. 기본 picker 색상과 텍스트 스타일이 다크 테마를
+포함해 호스트 `MaterialTheme`을 따라가는 것이 이 때문입니다. material3를 쓰지 않는 앱에서도 동작하며,
+`PickerStyle`을 명시적으로 전달하면 이 기본값은 읽히지 않습니다.
+
+Android Studio preview 렌더러(`ui-tooling`)는 릴리스 artifact와 함께 배포되지 **않습니다**.
 
 ## 사용법
 
@@ -159,8 +182,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.currentDateTime
 
 @Composable
 fun TimePicker24hExample() {
@@ -188,8 +211,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.currentDateTime
 
 @Composable
 fun TimePicker12hExample() {
@@ -341,7 +364,7 @@ import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.DatePicker
 import io.github.kezlab.compose.pickers.date.rememberDatePickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
@@ -405,7 +428,7 @@ import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.DateRange
 import io.github.kezlab.compose.pickers.date.DateRangePicker
 import io.github.kezlab.compose.pickers.date.rememberDateRangePickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -447,7 +470,7 @@ import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.YearMonth
 import io.github.kezlab.compose.pickers.date.YearMonthPicker
 import io.github.kezlab.compose.pickers.date.rememberYearMonthPickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 
 @Composable
 fun YearMonthPickerExample() {
@@ -592,7 +615,7 @@ item별 content description을 생략하면 picker는 화면에 보이는 텍스
 
 semantics 옵션은 picker column label과 이전/다음 action label 같은 구조적 semantics를 정의합니다.
 선택 상태는 고정된 영어 문구를 붙이지 않고 Compose `selected` semantics로 전달됩니다. 단일
-`Picker<T>`에서는 `PickerDefaults.itemFormat(...)`를, composite picker value에는
+`WheelPicker<T>`에서는 `PickerDefaults.itemFormat(...)`를, composite picker value에는
 `PickerDefaults.timePickerFormat(...)`, `durationPickerFormat(...)`, `datePickerFormat(...)`, `yearMonthPickerFormat(...)`를
 사용하세요. 화면별 재사용 가능한 label/action 객체는 `PickerDefaults.semantics(...)`,
 `timePickerSemantics(...)`, `durationPickerSemantics(...)`, `datePickerSemantics(...)`,
@@ -660,9 +683,9 @@ action으로 다른 item이 중앙에 올 때 live로 호출됩니다. 중앙 it
 `onSelectionSettled`가 한 번 호출되므로 expensive query나 preview commit은 여기에서 시작하세요. 앱이
 `selectedItem`을 직접 변경하면 wheel 위치만 동기화되고 두 callback은 호출되지 않습니다.
 
-기존 `Picker<T>`는 호환성을 위해 유지됩니다. `Picker.onSelectedItemChange`는 interaction이 settle된 뒤에만
-호출되며 live 중앙 item 변경을 노출하지 않습니다. Composite temporal picker는 인접 column이 scroll되는
-동안 dependent column을 다시 만들지 않도록 이 settled 계약을 계속 사용합니다.
+settle된 선택에만 반응하려면 `onSelectedItemChange`를 비워 두고 `onSelectionSettled`만 처리하세요.
+Composite temporal picker가 내부적으로 쓰는 계약이 바로 이것이며, 덕분에 인접 column이 scroll되는 동안
+dependent column이 다시 만들어지지 않습니다.
 
 두 API 모두 `items`는 비어 있으면 안 되고 중복값이 없어야 하며, `selectedItem`은 반드시 `items` 안에
 있어야 합니다. `items`가 바뀔 수 있다면 렌더링 전에
@@ -696,7 +719,7 @@ WheelPicker(
 화면에 보이는 텍스트와 스크린 리더 문구가 달라야 한다면 visible text는 `format.itemText`로, 접근성
 값 설명은 `format.itemContentDescription`으로 분리하세요.
 
-`PickerStyle`은 `WheelPicker`, `Picker`, composite picker에서 공유할 수 있는 시각 설정을 묶습니다.
+`PickerStyle`은 `WheelPicker`와 composite picker에서 공유할 수 있는 시각 설정을 묶습니다.
 
 | Option | 용도 |
 | :--- | :--- |
@@ -707,9 +730,9 @@ WheelPicker(
 | `itemPadding` | 각 item 주위에 적용되는 padding입니다. |
 | `fadingEdgeGradient` | 상하 fading edge mask입니다. |
 | `horizontalAlignment` | 각 column 안에서 item content를 가로 정렬하는 방식입니다. |
-| `dividerThickness`, `dividerShape`, `dividerWidth`, `isDividerVisible` | 독립 실행형 `WheelPicker` / `Picker`의 selection divider 설정입니다. Composite picker는 공유 band에 `selectionIndicator`를 사용합니다. |
+| `dividerThickness`, `dividerShape`, `dividerWidth`, `isDividerVisible` | 독립 실행형 `WheelPicker`의 selection divider 설정입니다. Composite picker는 공유 band에 `selectionIndicator`를 사용합니다. |
 
-독립 실행형 `Picker`에서는 `dividerWidth`로 선택 divider의 길이를 제어할 수 있습니다.
+독립 실행형 `WheelPicker`에서는 `dividerWidth`로 선택 divider의 길이를 제어할 수 있습니다.
 `PickerDividerWidth.Fill`(기본값)은 column 전체 폭을 사용하고,
 `PickerDividerWidth.Fraction(0f..1f)`은 column 폭의 비율을 사용하며,
 `PickerDividerWidth.Fixed(Dp)`는 고정 폭을 사용합니다. divider는 가로 중앙에 배치됩니다.
@@ -775,7 +798,7 @@ source로 state를 먼저 보정한 뒤 그 source를 picker에 게시하세요.
 
 | State | Method |
 | :--- | :--- |
-| Generic `WheelPicker<T>` / `Picker<T>` | 앱이 소유한 `selectedItem` 값을 갱신 |
+| Generic `WheelPicker<T>` | 앱이 소유한 `selectedItem` 값을 갱신 |
 | `time.TimePickerState` | `selectTime(LocalTime(...))`, `selectTime(hour, minute)` 또는 대응되는 `items` overload |
 | `duration.DurationPickerState` | `selectDuration(Duration)`, `selectDuration(hours, minutes)` 또는 대응되는 `items` overload |
 | `date.DatePickerState` | `selectDate(LocalDate(...))`, `selectDate(year, month, day)` 또는 대응되는 `items` overload |
