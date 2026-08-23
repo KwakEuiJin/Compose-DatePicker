@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -107,14 +107,14 @@ internal fun <T : Any> pickerItemHeightTexts(
  * @property textStyle The default interpolated text style for this item.
  * @property contentColor The default interpolated content color for this item.
  */
-class PickerItemScope<T : Any> internal constructor(
-    val item: T,
-    val text: String,
-    val isSelected: Boolean,
-    val isEnabled: Boolean,
-    val distanceFraction: Float,
-    val textStyle: TextStyle,
-    val contentColor: Color
+public class PickerItemScope<T : Any> internal constructor(
+    public val item: T,
+    public val text: String,
+    public val isSelected: Boolean,
+    public val isEnabled: Boolean,
+    public val distanceFraction: Float,
+    public val textStyle: TextStyle,
+    public val contentColor: Color
 )
 
 @Composable
@@ -159,8 +159,13 @@ internal fun <T : Any> rememberPickerItemHeight(
 }
 
 /**
- * A generic picker component that displays a list of items and allows the user to select one.
- * Follows Material3 component design patterns.
+ * The settled-only single-column picker used by this library's composite pickers.
+ *
+ * Composite pickers rebuild dependent columns from one logical selection, so they must not observe
+ * a value that is still moving. This entry point therefore reports a selection once per settled
+ * interaction and never during scroll. It is intentionally not part of the public API: apps use
+ * [WheelPicker] and opt into the same behavior by leaving `onSelectedItemChange` empty and handling
+ * `onSelectionSettled`.
  *
  * @param items The list of items to display. Treat this list as immutable while the picker is
  * composed; create and pass a new list when available values change.
@@ -178,7 +183,7 @@ internal fun <T : Any> rememberPickerItemHeight(
  * @param content Optional custom content composable for rendering each item.
  */
 @Composable
-fun <T : Any> Picker(
+internal fun <T : Any> Picker(
     items: List<T>,
     selectedItem: T,
     onSelectedItemChange: (T) -> Unit,
@@ -221,8 +226,8 @@ fun <T : Any> Picker(
  * when [T] is not saveable, persist a stable saveable key and map it back to an item before
  * composition.
  *
- * Use [Picker] when migrating code that expects its selection callback only after scrolling
- * settles. New generic wheel picker code should prefer this live controlled contract.
+ * To react only to settled selections - for example when a change triggers a query or rebuilds a
+ * dependent column - leave [onSelectedItemChange] empty and handle [onSelectionSettled] instead.
  *
  * @param items The immutable list of unique items to display.
  * @param selectedItem The controlled item currently selected by the app. It must exist in [items].
@@ -239,7 +244,7 @@ fun <T : Any> Picker(
  * @param content Optional custom content composable for rendering each item.
  */
 @Composable
-fun <T : Any> WheelPicker(
+public fun <T : Any> WheelPicker(
     items: List<T>,
     selectedItem: T,
     onSelectedItemChange: (T) -> Unit,
@@ -646,12 +651,14 @@ private fun <T : Any> PickerImpl(
                                     )
                                 )
                             } else {
-                                Text(
+                                // BasicText, not material3 Text: itemTextStyle already carries
+                                // the interpolated color and size, so the material3 wrapper would
+                                // only re-derive values this picker has already resolved.
+                                BasicText(
                                     text = itemText,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    style = itemTextStyle,
-                                    textAlign = TextAlign.Center
+                                    style = itemTextStyle.copy(textAlign = TextAlign.Center)
                                 )
                             }
                         }

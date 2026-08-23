@@ -15,7 +15,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import io.github.kezlab.compose.pickers.date.DateRange
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 import org.junit.Rule
 import org.junit.Test

@@ -7,8 +7,8 @@ import io.github.kezlab.compose.pickers.time.TimePickerState
 import io.github.kezlab.compose.pickers.time.repairedTimeAfterHour
 import io.github.kezlab.compose.pickers.time.repairedTimeAfterMinute
 import io.github.kezlab.compose.pickers.time.repairedTimeAfterPeriod
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlin.test.Test
@@ -188,7 +188,7 @@ class MultiWheelSelectionContractTest {
             minuteItems = listOf(0, 30),
             hour24Items = listOf(10, 11),
             hour12Items = (1..12).toList(),
-            periodItems = io.github.kezlab.compose.pickers.util.TimePeriod.entries,
+            periodItems = io.github.kezlab.compose.pickers.time.TimePeriod.entries,
             constraints = TimePickerConstraints(
                 minTime = LocalTime(10, 30),
                 maxTime = LocalTime(11, 0)
@@ -234,7 +234,7 @@ class MultiWheelSelectionContractTest {
             minuteItems = listOf(0),
             hour24Items = listOf(10),
             hour12Items = listOf(10),
-            periodItems = io.github.kezlab.compose.pickers.util.TimePeriod.entries,
+            periodItems = io.github.kezlab.compose.pickers.time.TimePeriod.entries,
             constraints = TimePickerConstraints(
                 minTime = LocalTime(10, 15),
                 maxTime = LocalTime(10, 15)

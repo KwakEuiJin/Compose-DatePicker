@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.kezlab.compose.pickers.Picker
+import io.github.kezlab.compose.pickers.WheelPicker
 import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.PickerItemFormat
 import io.github.kezlab.compose.pickers.PickerSemantics
@@ -92,24 +92,30 @@ internal fun DateTimePicker(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Picker(
+                        val selectedColumnValue = selectedDateTime.valueForPicker(column)
+                        // Dependent columns must not react to a value that is still moving, so the
+                        // live callback stays empty and only the settled selection commits.
+                        WheelPicker(
                             items = columnItems,
-                            selectedItem = selectedDateTime.valueForPicker(column),
-                            onSelectedItemChange = { value ->
-                                commit(
-                                    items.repairedDateTimeAfter(
-                                        currentDateTime = state.selectedDateTime,
-                                        column = column,
-                                        value = value
-                                    )
-                                )
-                            },
+                            selectedItem = selectedColumnValue,
+                            onSelectedItemChange = {},
                             modifier = Modifier.fillMaxWidth(),
                             enabled = enabled,
                             format = format,
                             style = style,
                             semantics = semantics,
-                            isInfinity = false
+                            isInfinity = false,
+                            onSelectionSettled = { value ->
+                                if (value != selectedColumnValue) {
+                                    commit(
+                                        items.repairedDateTimeAfter(
+                                            currentDateTime = state.selectedDateTime,
+                                            column = column,
+                                            value = value
+                                        )
+                                    )
+                                }
+                            }
                         )
                     }
                 }

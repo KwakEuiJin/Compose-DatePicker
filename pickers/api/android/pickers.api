@@ -208,6 +208,13 @@ public final class io/github/kezlab/compose/pickers/DurationPickerSemantics {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/github/kezlab/compose/pickers/PickerClockKt {
+	public static final fun currentDate (Lkotlinx/datetime/TimeZone;)Lkotlinx/datetime/LocalDate;
+	public static synthetic fun currentDate$default (Lkotlinx/datetime/TimeZone;ILjava/lang/Object;)Lkotlinx/datetime/LocalDate;
+	public static final fun currentDateTime (Lkotlinx/datetime/TimeZone;)Lkotlinx/datetime/LocalDateTime;
+	public static synthetic fun currentDateTime$default (Lkotlinx/datetime/TimeZone;ILjava/lang/Object;)Lkotlinx/datetime/LocalDateTime;
+}
+
 public final class io/github/kezlab/compose/pickers/PickerColors {
 	public static final field $stable I
 	public synthetic fun <init> (JJJJJJJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -366,7 +373,6 @@ public final class io/github/kezlab/compose/pickers/PickerItemScope {
 }
 
 public final class io/github/kezlab/compose/pickers/PickerKt {
-	public static final fun Picker (Ljava/util/List;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLio/github/kezlab/compose/pickers/PickerItemFormat;Lio/github/kezlab/compose/pickers/PickerStyle;Lio/github/kezlab/compose/pickers/PickerSemantics;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 	public static final fun WheelPicker (Ljava/util/List;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLio/github/kezlab/compose/pickers/PickerItemFormat;Lio/github/kezlab/compose/pickers/PickerStyle;Lio/github/kezlab/compose/pickers/PickerSemantics;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
@@ -503,21 +509,21 @@ public final class io/github/kezlab/compose/pickers/TimePickerItems {
 	public static final field $stable I
 	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/github/kezlab/compose/pickers/TimePickerConstraints;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/github/kezlab/compose/pickers/TimePickerConstraints;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun coerceTime (IILio/github/kezlab/compose/pickers/util/TimeFormat;)Lkotlinx/datetime/LocalTime;
-	public final fun coerceTime (IILio/github/kezlab/compose/pickers/util/TimePeriod;)Lkotlinx/datetime/LocalTime;
-	public final fun coerceTime (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;)Lkotlinx/datetime/LocalTime;
-	public static synthetic fun coerceTime$default (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/util/TimeFormat;ILjava/lang/Object;)Lkotlinx/datetime/LocalTime;
-	public static synthetic fun coerceTime$default (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;ILjava/lang/Object;)Lkotlinx/datetime/LocalTime;
+	public final fun coerceTime (IILio/github/kezlab/compose/pickers/time/TimeFormat;)Lkotlinx/datetime/LocalTime;
+	public final fun coerceTime (IILio/github/kezlab/compose/pickers/time/TimePeriod;)Lkotlinx/datetime/LocalTime;
+	public final fun coerceTime (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;)Lkotlinx/datetime/LocalTime;
+	public static synthetic fun coerceTime$default (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/time/TimeFormat;ILjava/lang/Object;)Lkotlinx/datetime/LocalTime;
+	public static synthetic fun coerceTime$default (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;ILjava/lang/Object;)Lkotlinx/datetime/LocalTime;
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Ljava/util/List;
 	public final fun component5 ()Lio/github/kezlab/compose/pickers/TimePickerConstraints;
-	public final fun contains (IILio/github/kezlab/compose/pickers/util/TimeFormat;)Z
-	public final fun contains (IILio/github/kezlab/compose/pickers/util/TimePeriod;)Z
-	public final fun contains (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;)Z
-	public static synthetic fun contains$default (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/util/TimeFormat;ILjava/lang/Object;)Z
-	public static synthetic fun contains$default (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;ILjava/lang/Object;)Z
+	public final fun contains (IILio/github/kezlab/compose/pickers/time/TimeFormat;)Z
+	public final fun contains (IILio/github/kezlab/compose/pickers/time/TimePeriod;)Z
+	public final fun contains (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;)Z
+	public static synthetic fun contains$default (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/time/TimeFormat;ILjava/lang/Object;)Z
+	public static synthetic fun contains$default (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;ILjava/lang/Object;)Z
 	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/github/kezlab/compose/pickers/TimePickerConstraints;)Lio/github/kezlab/compose/pickers/TimePickerItems;
 	public static synthetic fun copy$default (Lio/github/kezlab/compose/pickers/TimePickerItems;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/github/kezlab/compose/pickers/TimePickerConstraints;ILjava/lang/Object;)Lio/github/kezlab/compose/pickers/TimePickerItems;
 	public fun equals (Ljava/lang/Object;)Z
@@ -855,44 +861,20 @@ public final class io/github/kezlab/compose/pickers/duration/DurationPickerState
 	public static final fun rememberDurationPickerState-rnQQ1Ag (JLandroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/duration/DurationPickerState;
 }
 
-public final class io/github/kezlab/compose/pickers/resources/ActualResourceCollectorsKt {
-	public static final fun getAllDrawableResources (Lio/github/kezlab/compose/pickers/resources/Res;)Ljava/util/Map;
-	public static final fun getAllFontResources (Lio/github/kezlab/compose/pickers/resources/Res;)Ljava/util/Map;
-	public static final fun getAllPluralStringResources (Lio/github/kezlab/compose/pickers/resources/Res;)Ljava/util/Map;
-	public static final fun getAllStringArrayResources (Lio/github/kezlab/compose/pickers/resources/Res;)Ljava/util/Map;
-	public static final fun getAllStringResources (Lio/github/kezlab/compose/pickers/resources/Res;)Ljava/util/Map;
+public final class io/github/kezlab/compose/pickers/time/TimeFormat : java/lang/Enum {
+	public static final field HOUR_12 Lio/github/kezlab/compose/pickers/time/TimeFormat;
+	public static final field HOUR_24 Lio/github/kezlab/compose/pickers/time/TimeFormat;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/kezlab/compose/pickers/time/TimeFormat;
+	public static fun values ()[Lio/github/kezlab/compose/pickers/time/TimeFormat;
 }
 
-public final class io/github/kezlab/compose/pickers/resources/Res {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res;
-	public final fun getUri (Ljava/lang/String;)Ljava/lang/String;
-	public final fun readBytes (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/github/kezlab/compose/pickers/resources/Res$array {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res$array;
-}
-
-public final class io/github/kezlab/compose/pickers/resources/Res$drawable {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res$drawable;
-}
-
-public final class io/github/kezlab/compose/pickers/resources/Res$font {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res$font;
-}
-
-public final class io/github/kezlab/compose/pickers/resources/Res$plurals {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res$plurals;
-}
-
-public final class io/github/kezlab/compose/pickers/resources/Res$string {
-	public static final field $stable I
-	public static final field INSTANCE Lio/github/kezlab/compose/pickers/resources/Res$string;
+public final class io/github/kezlab/compose/pickers/time/TimePeriod : java/lang/Enum {
+	public static final field AM Lio/github/kezlab/compose/pickers/time/TimePeriod;
+	public static final field PM Lio/github/kezlab/compose/pickers/time/TimePeriod;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/kezlab/compose/pickers/time/TimePeriod;
+	public static fun values ()[Lio/github/kezlab/compose/pickers/time/TimePeriod;
 }
 
 public final class io/github/kezlab/compose/pickers/time/TimePickerKt {
@@ -902,19 +884,19 @@ public final class io/github/kezlab/compose/pickers/time/TimePickerKt {
 public final class io/github/kezlab/compose/pickers/time/TimePickerState {
 	public static final field $stable I
 	public static final field Companion Lio/github/kezlab/compose/pickers/time/TimePickerState$Companion;
-	public fun <init> (IILio/github/kezlab/compose/pickers/util/TimePeriod;Lio/github/kezlab/compose/pickers/util/TimeFormat;)V
-	public fun <init> (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;)V
-	public synthetic fun <init> (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IILio/github/kezlab/compose/pickers/time/TimePeriod;Lio/github/kezlab/compose/pickers/time/TimeFormat;)V
+	public fun <init> (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;)V
+	public synthetic fun <init> (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getSelectedHour ()I
 	public final fun getSelectedHourOfDay ()I
 	public final fun getSelectedMinute ()I
-	public final fun getSelectedPeriod ()Lio/github/kezlab/compose/pickers/util/TimePeriod;
+	public final fun getSelectedPeriod ()Lio/github/kezlab/compose/pickers/time/TimePeriod;
 	public final fun getSelectedTime ()Lkotlinx/datetime/LocalTime;
-	public final fun getTimeFormat ()Lio/github/kezlab/compose/pickers/util/TimeFormat;
+	public final fun getTimeFormat ()Lio/github/kezlab/compose/pickers/time/TimeFormat;
 	public final fun selectTime (II)V
 	public final fun selectTime (IILio/github/kezlab/compose/pickers/TimePickerItems;)V
-	public final fun selectTime (IILio/github/kezlab/compose/pickers/util/TimePeriod;)V
-	public final fun selectTime (IILio/github/kezlab/compose/pickers/util/TimePeriod;Lio/github/kezlab/compose/pickers/TimePickerItems;)V
+	public final fun selectTime (IILio/github/kezlab/compose/pickers/time/TimePeriod;)V
+	public final fun selectTime (IILio/github/kezlab/compose/pickers/time/TimePeriod;Lio/github/kezlab/compose/pickers/TimePickerItems;)V
 	public final fun selectTime (Lkotlinx/datetime/LocalTime;)V
 	public final fun selectTime (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/TimePickerItems;)V
 }
@@ -924,40 +906,9 @@ public final class io/github/kezlab/compose/pickers/time/TimePickerState$Compani
 }
 
 public final class io/github/kezlab/compose/pickers/time/TimePickerStateKt {
-	public static final fun rememberTimePickerState (IILio/github/kezlab/compose/pickers/util/TimePeriod;Lio/github/kezlab/compose/pickers/util/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
-	public static final fun rememberTimePickerState (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/util/TimePeriod;Lio/github/kezlab/compose/pickers/util/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
-	public static final fun rememberTimePickerState (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
-	public static final fun rememberTimePickerState (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/util/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
-}
-
-public final class io/github/kezlab/compose/pickers/util/TimeFormat : java/lang/Enum {
-	public static final field HOUR_12 Lio/github/kezlab/compose/pickers/util/TimeFormat;
-	public static final field HOUR_24 Lio/github/kezlab/compose/pickers/util/TimeFormat;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/kezlab/compose/pickers/util/TimeFormat;
-	public static fun values ()[Lio/github/kezlab/compose/pickers/util/TimeFormat;
-}
-
-public final class io/github/kezlab/compose/pickers/util/TimePeriod : java/lang/Enum {
-	public static final field AM Lio/github/kezlab/compose/pickers/util/TimePeriod;
-	public static final field PM Lio/github/kezlab/compose/pickers/util/TimePeriod;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/kezlab/compose/pickers/util/TimePeriod;
-	public static fun values ()[Lio/github/kezlab/compose/pickers/util/TimePeriod;
-}
-
-public final class io/github/kezlab/compose/pickers/util/TimeUtilKt {
-	public static final fun currentDate ()Lkotlinx/datetime/LocalDate;
-	public static final fun currentDateTime ()Lkotlinx/datetime/LocalDateTime;
-	public static final fun currentHour ()I
-	public static final fun currentMinute ()I
-	public static final fun currentMonth ()I
-	public static final fun currentYear ()I
-	public static final fun getDAY_RANGE ()Ljava/util/List;
-	public static final fun getHOUR12_RANGE ()Ljava/util/List;
-	public static final fun getHOUR24_RANGE ()Ljava/util/List;
-	public static final fun getMINUTE_RANGE ()Ljava/util/List;
-	public static final fun getMONTH_RANGE ()Ljava/util/List;
-	public static final fun getYEAR_RANGE ()Ljava/util/List;
+	public static final fun rememberTimePickerState (IILio/github/kezlab/compose/pickers/time/TimePeriod;Lio/github/kezlab/compose/pickers/time/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
+	public static final fun rememberTimePickerState (Lio/github/kezlab/compose/pickers/TimePickerItems;IILio/github/kezlab/compose/pickers/time/TimePeriod;Lio/github/kezlab/compose/pickers/time/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
+	public static final fun rememberTimePickerState (Lio/github/kezlab/compose/pickers/TimePickerItems;Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
+	public static final fun rememberTimePickerState (Lkotlinx/datetime/LocalTime;Lio/github/kezlab/compose/pickers/time/TimeFormat;Landroidx/compose/runtime/Composer;II)Lio/github/kezlab/compose/pickers/time/TimePickerState;
 }
 

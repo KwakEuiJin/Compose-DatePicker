@@ -14,13 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.kezlab.compose.pickers.util.DAY_RANGE
-import io.github.kezlab.compose.pickers.util.HOUR12_RANGE
-import io.github.kezlab.compose.pickers.util.HOUR24_RANGE
-import io.github.kezlab.compose.pickers.util.MINUTE_RANGE
-import io.github.kezlab.compose.pickers.util.MONTH_RANGE
-import io.github.kezlab.compose.pickers.util.TimePeriod
-import io.github.kezlab.compose.pickers.util.YEAR_RANGE
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import io.github.kezlab.compose.pickers.date.YearMonth
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -35,6 +29,24 @@ private const val DEFAULT_INTEGER_ITEM_HEIGHT_PROBE_TEXT = "0123456789"
 private const val DEFAULT_PERIOD_ITEM_HEIGHT_PROBE_TEXT = "AMPM"
 private val DEFAULT_DURATION_HOUR_ITEMS = (0..23).toList()
 
+/** Year values offered by the default year column (1000-9999). */
+private val YEAR_RANGE = (1000..9999).toList()
+
+/** Month numbers offered by the default month column (1-12). */
+private val MONTH_RANGE = (1..12).toList()
+
+/** Day-of-month values offered by the default day column (1-31). */
+private val DAY_RANGE = (1..31).toList()
+
+/** Hour values offered by the default 24-hour column (0-23). */
+private val HOUR24_RANGE = (0..23).toList()
+
+/** Hour values offered by the default 12-hour column (1-12). */
+private val HOUR12_RANGE = (1..12).toList()
+
+/** Minute values offered by the default minute column (0-59). */
+private val MINUTE_RANGE = (0..59).toList()
+
 private val DefaultIntegerItemText: (Int) -> String = { it.toString() }
 private val DefaultPeriodItemText: (TimePeriod) -> String = { it.name }
 
@@ -48,58 +60,58 @@ internal fun defaultPickerItemHeightProbeText(itemText: Any): String? = when {
  * Contains default values and factory methods for creating Picker styles.
  * Follows Material3 component design patterns.
  */
-object PickerDefaults {
+public object PickerDefaults {
 
     /**
      * Default number of visible items in the picker.
      * Must be an odd number for proper center alignment.
      */
-    const val VisibleItemsCount: Int = 3
+    public const val VisibleItemsCount: Int = 3
 
     /**
      * Default padding around each item.
      */
-    val ItemPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 14.dp)
+    public val ItemPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 14.dp)
 
     /**
      * Default thickness of the dividers.
      */
-    val DividerThickness: Dp = 1.dp
+    public val DividerThickness: Dp = 1.dp
 
     /**
      * Default spacing between pickers in composite components (e.g., TimePicker, DatePicker).
      */
-    val SpacingBetweenPickers: Dp = 0.dp
+    public val SpacingBetweenPickers: Dp = 0.dp
 
     /**
      * Default shape for the selected item background.
      */
-    val SelectedItemBackgroundShape: Shape = RoundedCornerShape(12.dp)
+    public val SelectedItemBackgroundShape: Shape = RoundedCornerShape(12.dp)
 
     /**
      * Default semantics action label for selecting the previous picker item.
      */
-    const val PreviousItemActionLabel: String = "Select previous item"
+    public const val PreviousItemActionLabel: String = "Select previous item"
 
     /**
      * Default semantics action label for selecting the next picker item.
      */
-    const val NextItemActionLabel: String = "Select next item"
+    public const val NextItemActionLabel: String = "Select next item"
 
     /**
      * Default shape for the dividers.
      */
-    val DividerShape: Shape = RoundedCornerShape(10.dp)
+    public val DividerShape: Shape = RoundedCornerShape(10.dp)
 
     /**
      * Default width of the selection dividers. Defaults to filling the picker column width.
      */
-    val DividerWidth: PickerDividerWidth = PickerDividerWidth.Fill
+    public val DividerWidth: PickerDividerWidth = PickerDividerWidth.Fill
 
     /**
      * Default horizontal inset applied to each side of a composite picker's selection indicator band.
      */
-    val SelectionIndicatorHorizontalInset: Dp = 0.dp
+    public val SelectionIndicatorHorizontalInset: Dp = 0.dp
 
     /**
      * Creates a [PickerColors] with the provided colors.
@@ -115,7 +127,7 @@ object PickerDefaults {
      * @return A [PickerColors] instance with the specified colors.
      */
     @Composable
-    fun colors(
+    public fun colors(
         dividerColor: Color = LocalContentColor.current.copy(alpha = 0.2f),
         selectedItemBackgroundColor: Color = Color.Transparent,
         textColor: Color = LocalContentColor.current.copy(alpha = 0.7f),
@@ -147,7 +159,7 @@ object PickerDefaults {
      * @return A [PickerTextStyles] instance with the specified styles.
      */
     @Composable
-    fun textStyles(
+    public fun textStyles(
         textStyle: TextStyle = LocalTextStyle.current.copy(fontSize = 16.sp),
         selectedTextStyle: TextStyle = LocalTextStyle.current.copy(fontSize = 22.sp)
     ): PickerTextStyles = PickerTextStyles(
@@ -174,7 +186,7 @@ object PickerDefaults {
      * @return A [PickerStyle] instance with the specified styling.
      */
     @Composable
-    fun style(
+    public fun style(
         visibleItemsCount: Int = VisibleItemsCount,
         colors: PickerColors = PickerDefaults.colors(),
         textStyles: PickerTextStyles = PickerDefaults.textStyles(),
@@ -218,7 +230,7 @@ object PickerDefaults {
      * @param disabledColor The color of the selection band lines when the composite picker is disabled.
      * @return A [PickerSelectionIndicator] instance with the specified values.
      */
-    fun selectionIndicator(
+    public fun selectionIndicator(
         style: PickerStyle,
         color: Color = style.colors.dividerColor,
         thickness: Dp = style.dividerThickness,
@@ -252,7 +264,7 @@ object PickerDefaults {
      * @return A [PickerSelectionIndicator] instance with the specified values.
      */
     @Composable
-    fun selectionIndicator(
+    public fun selectionIndicator(
         color: Color = LocalContentColor.current.copy(alpha = 0.2f),
         thickness: Dp = DividerThickness,
         shape: Shape = DividerShape,
@@ -281,7 +293,7 @@ object PickerDefaults {
      * once. [TimePickerColumn.PERIOD] is still required in 24-hour mode, but its position is ignored.
      * @return A [TimePickerLayout] instance with the specified column weights.
      */
-    fun timePickerLayout(
+    public fun timePickerLayout(
         periodWeight: Float? = 1f,
         hourWeight: Float? = 1f,
         minuteWeight: Float? = 1f,
@@ -306,7 +318,7 @@ object PickerDefaults {
      * @return A [DurationPickerLayout] instance with the specified column weights and order.
      * @throws IllegalArgumentException if a provided weight is not positive or [columnOrder] is invalid.
      */
-    fun durationPickerLayout(
+    public fun durationPickerLayout(
         hourWeight: Float? = 1f,
         minuteWeight: Float? = 1f,
         columnOrder: List<DurationPickerColumn> = listOf(
@@ -331,7 +343,7 @@ object PickerDefaults {
      * @param columnOrder The visual column order. Must contain every [DatePickerColumn] exactly once.
      * @return A [DatePickerLayout] instance with the specified column weights.
      */
-    fun datePickerLayout(
+    public fun datePickerLayout(
         yearWeight: Float? = 1.2f,
         monthWeight: Float? = 0.8f,
         dayWeight: Float? = 0.8f,
@@ -358,7 +370,7 @@ object PickerDefaults {
      * @param columnOrder The visual column order. Must contain every [YearMonthPickerColumn] exactly once.
      * @return A [YearMonthPickerLayout] instance with the specified column weights.
      */
-    fun yearMonthPickerLayout(
+    public fun yearMonthPickerLayout(
         yearWeight: Float? = 1f,
         monthWeight: Float? = 1f,
         columnOrder: List<YearMonthPickerColumn> = listOf(
@@ -381,7 +393,7 @@ object PickerDefaults {
      * @param nextItemActionLabel Accessibility action label for selecting the next item. Pass null or blank to omit the action.
      * @return A [PickerSemantics] instance with the specified semantics behavior.
      */
-    fun semantics(
+    public fun semantics(
         pickerLabel: String? = null,
         previousItemActionLabel: String? = PreviousItemActionLabel,
         nextItemActionLabel: String? = NextItemActionLabel
@@ -399,7 +411,7 @@ object PickerDefaults {
      * [itemText] is used as the default value description.
      * @return A [PickerItemFormat] instance with the specified value formatters.
      */
-    fun <T : Any> itemFormat(
+    public fun <T : Any> itemFormat(
         itemText: (T) -> String = { it.toString() },
         itemContentDescription: ((T) -> String)? = null
     ): PickerItemFormat<T> = PickerItemFormat(
@@ -418,7 +430,7 @@ object PickerDefaults {
      * @param periodItemContentDescription Optional accessibility description for each AM/PM value.
      * @return A [TimePickerFormat] instance with the specified value formatters.
      */
-    fun timePickerFormat(
+    public fun timePickerFormat(
         hourItemText: (Int) -> String = DefaultIntegerItemText,
         minuteItemText: (Int) -> String = DefaultIntegerItemText,
         periodItemText: (TimePeriod) -> String = DefaultPeriodItemText,
@@ -449,7 +461,7 @@ object PickerDefaults {
      * @param minuteItemContentDescription Optional accessibility description for each minute value.
      * @return A [DurationPickerFormat] instance with the specified value formatting.
      */
-    fun durationPickerFormat(
+    public fun durationPickerFormat(
         hourItemText: (Int) -> String = DefaultIntegerItemText,
         minuteItemText: (Int) -> String = DefaultIntegerItemText,
         hourItemContentDescription: ((Int) -> String)? = null,
@@ -476,7 +488,7 @@ object PickerDefaults {
      * @param dayItemContentDescription Optional accessibility description for each day value.
      * @return A [DatePickerFormat] instance with the specified value formatters.
      */
-    fun datePickerFormat(
+    public fun datePickerFormat(
         yearItemText: (Int) -> String = DefaultIntegerItemText,
         monthItemText: (Int) -> String = DefaultIntegerItemText,
         dayItemText: (Int) -> String = DefaultIntegerItemText,
@@ -507,7 +519,7 @@ object PickerDefaults {
      * @param monthItemContentDescription Optional accessibility description for each month value.
      * @return A [YearMonthPickerFormat] instance with the specified value formatters.
      */
-    fun yearMonthPickerFormat(
+    public fun yearMonthPickerFormat(
         yearItemText: (Int) -> String = DefaultIntegerItemText,
         monthItemText: (Int) -> String = DefaultIntegerItemText,
         yearItemContentDescription: ((Int) -> String)? = null,
@@ -536,7 +548,7 @@ object PickerDefaults {
      * @param nextItemActionLabel Accessibility action label used by child pickers to select the next item.
      * @return A [TimePickerSemantics] instance with the specified semantics behavior.
      */
-    fun timePickerSemantics(
+    public fun timePickerSemantics(
         hourPickerLabel: String? = "Hour",
         minutePickerLabel: String? = "Minute",
         periodPickerLabel: String? = "AM/PM",
@@ -569,7 +581,7 @@ object PickerDefaults {
      * @param nextItemActionLabel Accessibility action label used to select the next item.
      * @return A [DurationPickerSemantics] instance with the specified labels and actions.
      */
-    fun durationPickerSemantics(
+    public fun durationPickerSemantics(
         hourPickerLabel: String? = "Hours",
         minutePickerLabel: String? = "Minutes",
         previousItemActionLabel: String? = PreviousItemActionLabel,
@@ -597,7 +609,7 @@ object PickerDefaults {
      * @param nextItemActionLabel Accessibility action label used by child pickers to select the next item.
      * @return A [DatePickerSemantics] instance with the specified semantics behavior.
      */
-    fun datePickerSemantics(
+    public fun datePickerSemantics(
         yearPickerLabel: String? = "Year",
         monthPickerLabel: String? = "Month",
         dayPickerLabel: String? = "Day",
@@ -628,7 +640,7 @@ object PickerDefaults {
      * @param end Accessibility configuration for the end date picker.
      * @return A [DateRangePickerSemantics] instance with the specified semantics behavior.
      */
-    fun dateRangePickerSemantics(
+    public fun dateRangePickerSemantics(
         start: DatePickerSemantics = datePickerSemantics(
             yearPickerLabel = "Start year",
             monthPickerLabel = "Start month",
@@ -653,7 +665,7 @@ object PickerDefaults {
      * @param nextItemActionLabel Accessibility action label used by child pickers to select the next item.
      * @return A [YearMonthPickerSemantics] instance with the specified semantics behavior.
      */
-    fun yearMonthPickerSemantics(
+    public fun yearMonthPickerSemantics(
         yearPickerLabel: String? = "Year",
         monthPickerLabel: String? = "Month",
         previousItemActionLabel: String? = PreviousItemActionLabel,
@@ -678,7 +690,7 @@ object PickerDefaults {
      * @param maxTime The latest selectable time, inclusive. Pass null to omit the upper bound.
      * @return A [TimePickerConstraints] instance with the specified bounds.
      */
-    fun timePickerConstraints(
+    public fun timePickerConstraints(
         minTime: LocalTime? = null,
         maxTime: LocalTime? = null
     ): TimePickerConstraints = TimePickerConstraints(
@@ -695,7 +707,7 @@ object PickerDefaults {
      * @throws IllegalArgumentException if a bound is outside the supported duration domain or the
      * lower bound is greater than the upper bound.
      */
-    fun durationPickerConstraints(
+    public fun durationPickerConstraints(
         minDuration: Duration? = null,
         maxDuration: Duration? = null
     ): DurationPickerConstraints = DurationPickerConstraints(
@@ -717,7 +729,7 @@ object PickerDefaults {
      * @throws IllegalArgumentException if a scalar bound is outside the supported duration domain
      * or the lower bound is greater than the upper bound.
      */
-    fun durationPickerItems(
+    public fun durationPickerItems(
         hourItems: List<Int> = DEFAULT_DURATION_HOUR_ITEMS,
         minuteItems: List<Int> = MINUTE_RANGE,
         minDuration: Duration? = null,
@@ -742,7 +754,7 @@ object PickerDefaults {
      * @param maxTime The latest selectable time, inclusive. Pass null to omit the upper bound.
      * @return A [TimePickerItems] instance with the specified item lists.
      */
-    fun timePickerItems(
+    public fun timePickerItems(
         minuteItems: List<Int> = MINUTE_RANGE,
         hour24Items: List<Int> = HOUR24_RANGE,
         hour12Items: List<Int> = HOUR12_RANGE,
@@ -767,7 +779,7 @@ object PickerDefaults {
      * @param maxDate The latest selectable date, inclusive. Pass null to omit the upper bound.
      * @return A [DatePickerConstraints] instance with the specified bounds.
      */
-    fun datePickerConstraints(
+    public fun datePickerConstraints(
         minDate: LocalDate? = null,
         maxDate: LocalDate? = null
     ): DatePickerConstraints = DatePickerConstraints(
@@ -785,7 +797,7 @@ object PickerDefaults {
      * @param maxDate The latest selectable date, inclusive. Pass null to omit the upper bound.
      * @return A [DatePickerItems] instance with the specified item lists.
      */
-    fun datePickerItems(
+    public fun datePickerItems(
         yearItems: List<Int> = YEAR_RANGE,
         monthItems: List<Int> = MONTH_RANGE,
         dayItems: List<Int> = DAY_RANGE,
@@ -808,7 +820,7 @@ object PickerDefaults {
      * @param maxYearMonth The latest selectable year/month, inclusive. Pass null to omit the upper bound.
      * @return A [YearMonthPickerConstraints] instance with the specified bounds.
      */
-    fun yearMonthPickerConstraints(
+    public fun yearMonthPickerConstraints(
         minYearMonth: YearMonth? = null,
         maxYearMonth: YearMonth? = null
     ): YearMonthPickerConstraints = YearMonthPickerConstraints(
@@ -825,7 +837,7 @@ object PickerDefaults {
      * @param maxYearMonth The latest selectable year/month, inclusive. Pass null to omit the upper bound.
      * @return A [YearMonthPickerItems] instance with the specified item lists.
      */
-    fun yearMonthPickerItems(
+    public fun yearMonthPickerItems(
         yearItems: List<Int> = YEAR_RANGE,
         monthItems: List<Int> = MONTH_RANGE,
         minYearMonth: YearMonth? = null,
@@ -844,7 +856,7 @@ object PickerDefaults {
      *
      * @return A vertical [Brush] with transparent edges and opaque center.
      */
-    fun fadingEdgeGradient(): Brush = Brush.verticalGradient(
+    public fun fadingEdgeGradient(): Brush = Brush.verticalGradient(
         0f to Color.Transparent,
         0.5f to Color.Black,
         1f to Color.Transparent
@@ -865,7 +877,7 @@ object PickerDefaults {
  * @see PickerDefaults.colors
  */
 @Immutable
-data class PickerColors(
+public data class PickerColors(
     val dividerColor: Color,
     val selectedItemBackgroundColor: Color,
     val textColor: Color,
@@ -888,7 +900,7 @@ data class PickerColors(
  * @see PickerDefaults.textStyles
  */
 @Immutable
-data class PickerTextStyles(
+public data class PickerTextStyles(
     val textStyle: TextStyle,
     val selectedTextStyle: TextStyle
 )
@@ -910,7 +922,7 @@ data class PickerTextStyles(
  * @see PickerDefaults.style
  */
 @Immutable
-data class PickerStyle(
+public data class PickerStyle(
     val visibleItemsCount: Int,
     val colors: PickerColors,
     val textStyles: PickerTextStyles,
@@ -930,11 +942,11 @@ data class PickerStyle(
  * @see PickerDefaults.style
  */
 @Immutable
-sealed interface PickerDividerWidth {
+public sealed interface PickerDividerWidth {
     /**
      * The divider fills the full width of the picker column.
      */
-    data object Fill : PickerDividerWidth
+    public data object Fill : PickerDividerWidth
 
     /**
      * The divider spans a [fraction] of the picker column width, centered horizontally.
@@ -942,7 +954,7 @@ sealed interface PickerDividerWidth {
      * @param fraction The portion of the column width to occupy, in `0f..1f`.
      */
     @Immutable
-    data class Fraction(val fraction: Float) : PickerDividerWidth {
+    public data class Fraction(val fraction: Float) : PickerDividerWidth {
         init {
             require(fraction in 0f..1f) {
                 "PickerDividerWidth.Fraction.fraction must be in 0f..1f, but was $fraction."
@@ -956,7 +968,7 @@ sealed interface PickerDividerWidth {
      * @param width The absolute divider width. Must be finite and non-negative.
      */
     @Immutable
-    data class Fixed(val width: Dp) : PickerDividerWidth {
+    public data class Fixed(val width: Dp) : PickerDividerWidth {
         init {
             width.requireFiniteNonNegative(name = "PickerDividerWidth.Fixed.width")
         }
@@ -979,7 +991,7 @@ sealed interface PickerDividerWidth {
  * @see PickerDefaults.selectionIndicator
  */
 @Immutable
-data class PickerSelectionIndicator(
+public data class PickerSelectionIndicator(
     val color: Color,
     val thickness: Dp,
     val shape: Shape,
@@ -1002,7 +1014,7 @@ private fun Dp.requireFiniteNonNegative(name: String) {
 /**
  * Identifies a [io.github.kezlab.compose.pickers.time.TimePicker] column for layout ordering.
  */
-enum class TimePickerColumn {
+public enum class TimePickerColumn {
     /**
      * AM/PM period column. This column is rendered only in 12-hour mode.
      */
@@ -1022,7 +1034,7 @@ enum class TimePickerColumn {
 /**
  * Identifies a [io.github.kezlab.compose.pickers.date.DatePicker] column for layout ordering.
  */
-enum class DatePickerColumn {
+public enum class DatePickerColumn {
     /**
      * Year column.
      */
@@ -1042,7 +1054,7 @@ enum class DatePickerColumn {
 /**
  * Identifies a [io.github.kezlab.compose.pickers.date.YearMonthPicker] column for layout ordering.
  */
-enum class YearMonthPickerColumn {
+public enum class YearMonthPickerColumn {
     /**
      * Year column.
      */
@@ -1068,7 +1080,7 @@ enum class YearMonthPickerColumn {
  * @see PickerDefaults.timePickerLayout
  */
 @Immutable
-data class TimePickerLayout(
+public data class TimePickerLayout(
     val periodWeight: Float?,
     val hourWeight: Float?,
     val minuteWeight: Float?,
@@ -1103,7 +1115,7 @@ data class TimePickerLayout(
  * @see PickerDefaults.datePickerLayout
  */
 @Immutable
-data class DatePickerLayout(
+public data class DatePickerLayout(
     val yearWeight: Float?,
     val monthWeight: Float?,
     val dayWeight: Float?,
@@ -1137,7 +1149,7 @@ data class DatePickerLayout(
  * @see PickerDefaults.yearMonthPickerLayout
  */
 @Immutable
-data class YearMonthPickerLayout(
+public data class YearMonthPickerLayout(
     val yearWeight: Float?,
     val monthWeight: Float?,
     val columnOrder: ImmutableList<YearMonthPickerColumn> = persistentListOf(

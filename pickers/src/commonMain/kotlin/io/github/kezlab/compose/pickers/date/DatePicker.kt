@@ -56,7 +56,7 @@ import kotlinx.datetime.LocalDate
  * @throws IllegalArgumentException if custom item lists are empty, contain duplicates, contain values outside the supported ranges, or omit the current selected year/month/day after date constraints are applied.
  */
 @Composable
-fun DatePicker(
+public fun DatePicker(
     modifier: Modifier = Modifier,
     pickerModifier: Modifier = Modifier,
     state: DatePickerState = rememberDatePickerState(),

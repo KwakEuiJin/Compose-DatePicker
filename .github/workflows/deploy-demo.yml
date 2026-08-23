@@ -1,8 +1,9 @@
-name: Deploy Web Demo
+name: Deploy Web Demo and API docs
 
-# Builds the Compose Multiplatform sample for Kotlin/Wasm and publishes it to GitHub Pages.
-# This is a single-target build, so it is fast enough to run on every push to main, unlike the
-# full verification matrix in integration-build-test.yml.
+# Builds the Compose Multiplatform sample for Kotlin/Wasm plus the Dokka API reference and
+# publishes both to GitHub Pages: the demo at the site root, the API reference under /api/.
+# These are single-target builds, so they are fast enough to run on every push to main, unlike
+# the full verification matrix in integration-build-test.yml.
 
 on:
   push:
@@ -37,13 +38,24 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Build Wasm distribution
-        run: ./gradlew :sample:wasmJsBrowserDistribution --no-daemon
+      - name: Build Wasm distribution and API reference
+        run: |
+          ./gradlew \
+            :sample:wasmJsBrowserDistribution \
+            :pickers:dokkaGeneratePublicationHtml \
+            --no-daemon
+
+      - name: Assemble site
+        run: |
+          rm -rf build/site
+          mkdir -p build/site/api
+          cp -R sample/build/dist/wasmJs/productionExecutable/. build/site/
+          cp -R pickers/build/dokka/html/. build/site/api/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: sample/build/dist/wasmJs/productionExecutable
+          path: build/site
 
   deploy:
     needs: build

@@ -24,7 +24,7 @@ import io.github.kezlab.compose.pickers.duration.DurationPicker
 import io.github.kezlab.compose.pickers.duration.rememberDurationPickerState
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimeFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlin.time.Duration.Companion.hours

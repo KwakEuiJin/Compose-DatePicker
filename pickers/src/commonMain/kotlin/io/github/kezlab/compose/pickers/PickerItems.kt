@@ -3,8 +3,8 @@ package io.github.kezlab.compose.pickers
 import io.github.kezlab.compose.pickers.date.DateRange
 import io.github.kezlab.compose.pickers.date.YearMonth
 import io.github.kezlab.compose.pickers.date.daysInMonth
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
@@ -17,7 +17,7 @@ import kotlin.math.abs
  * @param minTime The earliest selectable time, inclusive. Pass null to omit the lower bound.
  * @param maxTime The latest selectable time, inclusive. Pass null to omit the upper bound.
  */
-data class TimePickerConstraints(
+public data class TimePickerConstraints(
     val minTime: LocalTime? = null,
     val maxTime: LocalTime? = null
 ) {
@@ -34,7 +34,7 @@ data class TimePickerConstraints(
     /**
      * Returns whether [time] is inside the configured inclusive bounds.
      */
-    fun contains(time: LocalTime): Boolean =
+    public fun contains(time: LocalTime): Boolean =
         (minTime == null || time >= minTime) &&
                 (maxTime == null || time <= maxTime)
 }
@@ -54,7 +54,7 @@ data class TimePickerConstraints(
  * @param constraints Inclusive time bounds applied after the hour, minute, and period item lists.
  * @see PickerDefaults.timePickerItems
  */
-data class TimePickerItems(
+public data class TimePickerItems(
     val minuteItems: List<Int>,
     val hour24Items: List<Int>,
     val hour12Items: List<Int>,
@@ -66,7 +66,7 @@ data class TimePickerItems(
      *
      * This predicate does not validate the item-list configuration; it only checks membership.
      */
-    fun contains(time: LocalTime, timeFormat: TimeFormat = TimeFormat.HOUR_24): Boolean {
+    public fun contains(time: LocalTime, timeFormat: TimeFormat = TimeFormat.HOUR_24): Boolean {
         if (time.minute !in minuteItems) return false
         return constraints.contains(time) && when (timeFormat) {
             TimeFormat.HOUR_24 -> time.hour in hour24Items
@@ -82,7 +82,7 @@ data class TimePickerItems(
      * [hour] is interpreted as hour-of-day in `0..23`. Values outside the supported hour or minute
      * ranges return false.
      */
-    fun contains(
+    public fun contains(
         hour: Int,
         minute: Int,
         timeFormat: TimeFormat = TimeFormat.HOUR_24
@@ -100,7 +100,7 @@ data class TimePickerItems(
      * [displayHour] is interpreted as the format-hour shown to users in `1..12`. Values outside the
      * supported display-hour or minute ranges return false.
      */
-    fun contains(displayHour: Int, minute: Int, period: TimePeriod): Boolean {
+    public fun contains(displayHour: Int, minute: Int, period: TimePeriod): Boolean {
         if (displayHour !in 1..12 || minute !in 0..59) return false
         return contains(
             time = displayTimeFromParts(
@@ -121,7 +121,7 @@ data class TimePickerItems(
      * @throws IllegalArgumentException if the item lists needed by [timeFormat] are empty, contain
      * duplicates, or contain values outside their supported ranges.
      */
-    fun coerceTime(time: LocalTime, timeFormat: TimeFormat = TimeFormat.HOUR_24): LocalTime {
+    public fun coerceTime(time: LocalTime, timeFormat: TimeFormat = TimeFormat.HOUR_24): LocalTime {
         requireValid(timeFormat)
         return selectableTimesFor(timeFormat).closestTo(time)
     }
@@ -134,7 +134,7 @@ data class TimePickerItems(
      * @throws IllegalArgumentException if [hour] or [minute] is outside the supported range, or if
      * the item lists needed by [timeFormat] are invalid.
      */
-    fun coerceTime(
+    public fun coerceTime(
         hour: Int,
         minute: Int,
         timeFormat: TimeFormat = TimeFormat.HOUR_24
@@ -154,7 +154,7 @@ data class TimePickerItems(
      * @throws IllegalArgumentException if [displayHour] is outside `1..12`, [minute] is outside
      * `0..59`, or the 12-hour item lists are invalid.
      */
-    fun coerceTime(displayHour: Int, minute: Int, period: TimePeriod): LocalTime =
+    public fun coerceTime(displayHour: Int, minute: Int, period: TimePeriod): LocalTime =
         coerceTime(
             time = displayTimeFromParts(
                 displayHour = displayHour,
@@ -253,7 +253,7 @@ data class TimePickerItems(
  * @param minDate The earliest selectable date, inclusive. Pass null to omit the lower bound.
  * @param maxDate The latest selectable date, inclusive. Pass null to omit the upper bound.
  */
-data class DatePickerConstraints(
+public data class DatePickerConstraints(
     val minDate: LocalDate? = null,
     val maxDate: LocalDate? = null
 ) {
@@ -270,7 +270,7 @@ data class DatePickerConstraints(
     /**
      * Returns whether [date] is inside the configured inclusive bounds.
      */
-    fun contains(date: LocalDate): Boolean =
+    public fun contains(date: LocalDate): Boolean =
         (minDate == null || date >= minDate) &&
                 (maxDate == null || date <= maxDate)
 
@@ -292,7 +292,7 @@ data class DatePickerConstraints(
  * @param constraints Inclusive date bounds applied after the year, month, and day item lists.
  * @see PickerDefaults.datePickerItems
  */
-data class DatePickerItems(
+public data class DatePickerItems(
     val yearItems: List<Int>,
     val monthItems: List<Int>,
     val dayItems: List<Int>,
@@ -303,7 +303,7 @@ data class DatePickerItems(
      *
      * [dayItems] is checked after the selected year/month maximum day and [constraints] are applied.
      */
-    fun contains(date: LocalDate): Boolean {
+    public fun contains(date: LocalDate): Boolean {
         val month = date.month.number
         return date.year in yearItems &&
                 month in monthItems &&
@@ -318,7 +318,7 @@ data class DatePickerItems(
      * Values outside the supported year, month, or day ranges return false. A [day] greater than the
      * maximum valid day for [year] and [month] also returns false.
      */
-    fun contains(year: Int, month: Int, day: Int): Boolean {
+    public fun contains(year: Int, month: Int, day: Int): Boolean {
         if (year !in 1000..9999 || month !in 1..12 || day < 1) return false
         if (day > daysInMonth(year, month)) return false
         return contains(LocalDate(year = year, month = month, day = day))
@@ -330,7 +330,7 @@ data class DatePickerItems(
      * This checks the start and end dates used by [io.github.kezlab.compose.pickers.date.DateRangePicker]. It does not
      * require every date inside [dateRange] to appear in [dayItems].
      */
-    fun contains(dateRange: DateRange): Boolean =
+    public fun contains(dateRange: DateRange): Boolean =
         contains(startDate = dateRange.startDate, endDate = dateRange.endDate)
 
     /**
@@ -340,7 +340,7 @@ data class DatePickerItems(
      * both provided boundary dates are selectable; it does not require every date between them to
      * appear in [dayItems].
      */
-    fun contains(startDate: LocalDate, endDate: LocalDate): Boolean =
+    public fun contains(startDate: LocalDate, endDate: LocalDate): Boolean =
         contains(startDate) && contains(endDate)
 
     /**
@@ -349,7 +349,7 @@ data class DatePickerItems(
      * Values outside the supported year, month, or day ranges return false. A day greater than the
      * maximum valid day for its year and month also returns false.
      */
-    fun contains(
+    public fun contains(
         startYear: Int,
         startMonth: Int,
         startDay: Int,
@@ -371,7 +371,7 @@ data class DatePickerItems(
      * contain values outside their supported ranges, or cannot provide at least one valid day for every
      * selectable year/month combination.
      */
-    fun coerceDate(date: LocalDate): LocalDate {
+    public fun coerceDate(date: LocalDate): LocalDate {
         requireValid()
         return closestSelectableDateTo(date)
     }
@@ -385,7 +385,7 @@ data class DatePickerItems(
      * @throws IllegalArgumentException if [year] or [month] is outside the supported range, if [day]
      * is less than 1, or if the configured item lists are invalid.
      */
-    fun coerceDate(year: Int, month: Int, day: Int): LocalDate =
+    public fun coerceDate(year: Int, month: Int, day: Int): LocalDate =
         coerceDate(dateFromParts(year = year, month = month, day = day))
 
     /**
@@ -398,7 +398,7 @@ data class DatePickerItems(
      *
      * @throws IllegalArgumentException if the configured item lists are invalid.
      */
-    fun coerceDateRange(dateRange: DateRange): DateRange =
+    public fun coerceDateRange(dateRange: DateRange): DateRange =
         coerceDateRange(
             startDate = dateRange.startDate,
             endDate = dateRange.endDate
@@ -412,7 +412,7 @@ data class DatePickerItems(
      *
      * @throws IllegalArgumentException if the configured item lists are invalid.
      */
-    fun coerceDateRange(startDate: LocalDate, endDate: LocalDate): DateRange =
+    public fun coerceDateRange(startDate: LocalDate, endDate: LocalDate): DateRange =
         DateRange.ordered(
             startDate = coerceDate(startDate),
             endDate = coerceDate(endDate)
@@ -427,7 +427,7 @@ data class DatePickerItems(
      * @throws IllegalArgumentException if any year/month/day value is outside its supported range, or
      * if the configured item lists are invalid.
      */
-    fun coerceDateRange(
+    public fun coerceDateRange(
         startYear: Int,
         startMonth: Int,
         startDay: Int,
@@ -544,7 +544,7 @@ data class DatePickerItems(
  * @param minYearMonth The earliest selectable year/month, inclusive. Pass null to omit the lower bound.
  * @param maxYearMonth The latest selectable year/month, inclusive. Pass null to omit the upper bound.
  */
-data class YearMonthPickerConstraints(
+public data class YearMonthPickerConstraints(
     val minYearMonth: YearMonth? = null,
     val maxYearMonth: YearMonth? = null
 ) {
@@ -562,7 +562,7 @@ data class YearMonthPickerConstraints(
     /**
      * Returns whether [yearMonth] is inside the configured inclusive bounds.
      */
-    fun contains(yearMonth: YearMonth): Boolean =
+    public fun contains(yearMonth: YearMonth): Boolean =
         (minYearMonth == null || yearMonth >= minYearMonth) &&
                 (maxYearMonth == null || yearMonth <= maxYearMonth)
 }
@@ -580,7 +580,7 @@ data class YearMonthPickerConstraints(
  * @param constraints Inclusive year/month bounds applied after the year and month item lists.
  * @see PickerDefaults.yearMonthPickerItems
  */
-data class YearMonthPickerItems(
+public data class YearMonthPickerItems(
     val yearItems: List<Int>,
     val monthItems: List<Int>,
     val constraints: YearMonthPickerConstraints = YearMonthPickerConstraints()
@@ -588,7 +588,7 @@ data class YearMonthPickerItems(
     /**
      * Returns whether [yearMonth] is directly selectable.
      */
-    fun contains(yearMonth: YearMonth): Boolean =
+    public fun contains(yearMonth: YearMonth): Boolean =
         contains(year = yearMonth.year, month = yearMonth.month)
 
     /**
@@ -596,7 +596,7 @@ data class YearMonthPickerItems(
      *
      * Values outside the supported year or month ranges return false.
      */
-    fun contains(year: Int, month: Int): Boolean {
+    public fun contains(year: Int, month: Int): Boolean {
         if (year !in 1000..9999 || month !in 1..12) return false
         return year in yearItems &&
                 month in monthItems &&
@@ -606,7 +606,7 @@ data class YearMonthPickerItems(
     /**
      * Returns whether the year/month portion of [date] is directly selectable.
      */
-    fun contains(date: LocalDate): Boolean =
+    public fun contains(date: LocalDate): Boolean =
         contains(YearMonth.from(date))
 
     /**
@@ -615,7 +615,7 @@ data class YearMonthPickerItems(
      * @throws IllegalArgumentException if [yearItems] or [monthItems] are empty, contain duplicates,
      * or contain values outside their supported ranges.
      */
-    fun coerceYearMonth(yearMonth: YearMonth): YearMonth =
+    public fun coerceYearMonth(yearMonth: YearMonth): YearMonth =
         coerceYearMonth(year = yearMonth.year, month = yearMonth.month)
 
     /**
@@ -624,7 +624,7 @@ data class YearMonthPickerItems(
      * @throws IllegalArgumentException if [year] or [month] is outside the supported range, or if
      * the configured item lists are invalid.
      */
-    fun coerceYearMonth(year: Int, month: Int): YearMonth {
+    public fun coerceYearMonth(year: Int, month: Int): YearMonth {
         require(year in 1000..9999) {
             "year must be in range [1000, 9999], but was $year"
         }
@@ -638,7 +638,7 @@ data class YearMonthPickerItems(
     /**
      * Returns the closest selectable [YearMonth] for the year/month portion of [date].
      */
-    fun coerceDate(date: LocalDate): LocalDate =
+    public fun coerceDate(date: LocalDate): LocalDate =
         coerceYearMonth(YearMonth.from(date)).atDay()
 
     internal fun selectableYearItems(): List<Int> =

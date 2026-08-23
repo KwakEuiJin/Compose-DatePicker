@@ -55,9 +55,32 @@ On a mismatch, inspect the local HTML report at
 `screenshot-tests/build/reports/screenshotTest/preview/debug/index.html`. Do not update reference
 images merely to make a failing comparison pass; first review the generated diff.
 
-Comparison allows a 0.01% pixel difference (`imageDifferenceThreshold`) so that host-level
-antialiasing noise between the machine that recorded an image and the machine that validates it
-does not fail the build. Real visual regressions are far larger than that.
+Comparison allows a 0.01% pixel difference (`imageDifferenceThreshold`).
+
+## Why validation runs on macOS
+
+`screenshot-test.yml` uses a macOS runner deliberately. Reference images reproduce only on a host
+that renders like the one that recorded them, and the 0.01% allowance is nowhere near enough to
+absorb the difference. Measured on 2026-08-23 by validating the committed references, recorded on
+macOS arm64, on both runner types:
+
+| | differing pixels | per-pixel delta |
+| :--- | ---: | ---: |
+| Linux x64 runner | 0.164% - 0.888%, all 9 references fail | exactly 1/255, every pixel |
+| macOS runner | 0 | - |
+| One digit changed (`LocalTime(13, 5)` to `13, 6`), same host | 0.189% | up to 225/255 |
+
+Two things follow.
+
+- Do not move this job to a Linux runner to save cost. Host difference there is 16-90x the
+  threshold, so every reference fails.
+- Do not raise `imageDifferenceThreshold` to make a cross-host run pass. The setting counts
+  differing pixels with no per-pixel tolerance, so a threshold high enough for Linux noise
+  (>=0.9%) also masks a one-digit regression at 0.189%. What separates the two is how *much* each
+  pixel differs - 1 versus 225 - which this setting cannot express.
+
+If the recording host ever changes, every reference has to be re-recorded there and this job's
+runner has to change with it.
 
 ## What invalidates references
 

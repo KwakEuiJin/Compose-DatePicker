@@ -14,7 +14,7 @@ import androidx.compose.runtime.Immutable
  * @see PickerDefaults.semantics
  */
 @Immutable
-data class PickerSemantics(
+public data class PickerSemantics(
     val pickerLabel: String? = null,
     val previousItemActionLabel: String? = PickerDefaults.PreviousItemActionLabel,
     val nextItemActionLabel: String? = PickerDefaults.NextItemActionLabel
@@ -29,7 +29,7 @@ data class PickerSemantics(
  * @see PickerDefaults.timePickerSemantics
  */
 @Immutable
-data class TimePickerSemantics(
+public data class TimePickerSemantics(
     val hour: PickerSemantics,
     val minute: PickerSemantics,
     val period: PickerSemantics
@@ -44,7 +44,7 @@ data class TimePickerSemantics(
  * @see PickerDefaults.datePickerSemantics
  */
 @Immutable
-data class DatePickerSemantics(
+public data class DatePickerSemantics(
     val year: PickerSemantics,
     val month: PickerSemantics,
     val day: PickerSemantics
@@ -58,7 +58,7 @@ data class DatePickerSemantics(
  * @see PickerDefaults.dateRangePickerSemantics
  */
 @Immutable
-data class DateRangePickerSemantics(
+public data class DateRangePickerSemantics(
     val start: DatePickerSemantics,
     val end: DatePickerSemantics
 )
@@ -71,7 +71,7 @@ data class DateRangePickerSemantics(
  * @see PickerDefaults.yearMonthPickerSemantics
  */
 @Immutable
-data class YearMonthPickerSemantics(
+public data class YearMonthPickerSemantics(
     val year: PickerSemantics,
     val month: PickerSemantics
 )

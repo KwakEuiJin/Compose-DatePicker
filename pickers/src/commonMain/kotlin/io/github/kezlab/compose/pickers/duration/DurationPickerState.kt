@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.minutes
  * @throws IllegalArgumentException if [initialDuration] is outside the supported duration domain.
  */
 @Composable
-fun rememberDurationPickerState(
+public fun rememberDurationPickerState(
     initialDuration: Duration = Duration.ZERO
 ): DurationPickerState {
     val rememberedInitialDuration = remember { initialDuration }
@@ -48,7 +48,7 @@ fun rememberDurationPickerState(
  * item configuration has no selectable scalar combination.
  */
 @Composable
-fun rememberDurationPickerState(
+public fun rememberDurationPickerState(
     items: DurationPickerItems,
     initialDuration: Duration = Duration.ZERO
 ): DurationPickerState {
@@ -74,7 +74,7 @@ fun rememberDurationPickerState(
  * or its elapsed whole-hour part does not fit in [Int].
  */
 @Stable
-class DurationPickerState(
+public class DurationPickerState(
     initialDuration: Duration = Duration.ZERO
 ) {
     /**
@@ -84,7 +84,7 @@ class DurationPickerState(
      * @param initialMinutes Initial minute-within-hour value in `0..59`.
      * @throws IllegalArgumentException if either part is outside its supported range.
      */
-    constructor(initialHours: Int, initialMinutes: Int) : this(
+    public constructor(initialHours: Int, initialMinutes: Int) : this(
         initialDuration = checkedDurationPickerValue(
             hours = initialHours,
             minutes = initialMinutes,
@@ -103,15 +103,15 @@ class DurationPickerState(
     private var mutableSelectedDuration: Duration by mutableStateOf(initialDuration)
 
     /** The currently selected logical duration. */
-    val selectedDuration: Duration
+    public val selectedDuration: Duration
         get() = mutableSelectedDuration
 
     /** The elapsed whole-hour part of [selectedDuration]. */
-    val selectedHours: Int
+    public val selectedHours: Int
         get() = (selectedDuration.inWholeMinutes / MINUTES_PER_HOUR).toInt()
 
     /** The minute-within-hour part of [selectedDuration], in `0..59`. */
-    val selectedMinutes: Int
+    public val selectedMinutes: Int
         get() = (selectedDuration.inWholeMinutes % MINUTES_PER_HOUR).toInt()
 
     /**
@@ -121,7 +121,7 @@ class DurationPickerState(
      * @throws IllegalArgumentException if [duration] is not finite, non-negative, whole-minute, or
      * its whole-hour part does not fit in [Int].
      */
-    fun selectDuration(duration: Duration) {
+    public fun selectDuration(duration: Duration) {
         duration.requireDurationPickerValue("duration")
         require(duration.inWholeMinutes / MINUTES_PER_HOUR <= Int.MAX_VALUE) {
             "duration whole hours must fit in Int, but was $duration."
@@ -136,7 +136,7 @@ class DurationPickerState(
      * @param minutes The minute-within-hour component in `0..59`.
      * @throws IllegalArgumentException if either part is outside its supported range.
      */
-    fun selectDuration(hours: Int, minutes: Int) {
+    public fun selectDuration(hours: Int, minutes: Int) {
         selectDuration(
             checkedDurationPickerValue(
                 hours = hours,
@@ -155,7 +155,7 @@ class DurationPickerState(
      * @throws IllegalArgumentException if the requested value or item configuration is invalid or
      * the item configuration has no selectable scalar combination.
      */
-    fun selectDuration(duration: Duration, items: DurationPickerItems) {
+    public fun selectDuration(duration: Duration, items: DurationPickerItems) {
         selectDuration(items.coerceDuration(duration))
     }
 
@@ -168,13 +168,13 @@ class DurationPickerState(
      * @throws IllegalArgumentException if the requested parts or item configuration are invalid or
      * the item configuration has no selectable scalar combination.
      */
-    fun selectDuration(hours: Int, minutes: Int, items: DurationPickerItems) {
+    public fun selectDuration(hours: Int, minutes: Int, items: DurationPickerItems) {
         selectDuration(items.coerceDuration(hours = hours, minutes = minutes))
     }
 
-    companion object {
+    public companion object {
         /** Saves and restores [DurationPickerState] as total whole minutes. */
-        val Saver: Saver<DurationPickerState, Any> = listSaver(
+        public val Saver: Saver<DurationPickerState, Any> = listSaver(
             save = { listOf(it.selectedDuration.inWholeMinutes) },
             restore = { DurationPickerState(initialDuration = (it[0] as Long).minutes) }
         )

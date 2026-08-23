@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.kezlab.compose.pickers.Picker
+import io.github.kezlab.compose.pickers.WheelPicker
 import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.PickerStyle
 
@@ -86,42 +86,50 @@ internal fun QuantityUnitPicker(
         layout.columnOrder.forEach { column ->
             key(column, state, items, state.selectedSelection, enabled) {
                 when (column) {
-                    QuantityUnitColumn.QUANTITY -> Picker(
+                    // Dependent columns must not react to a value that is still moving, so the
+                    // live callback stays empty and only the settled selection commits.
+                    QuantityUnitColumn.QUANTITY -> WheelPicker(
                         items = quantityItems,
                         selectedItem = state.selectedQuantity,
-                        onSelectedItemChange = { quantity ->
-                            commit(
-                                items.repairedSelectionAfterQuantity(
-                                    currentSelection = state.selectedSelection,
-                                    quantity = quantity
-                                )
-                            )
-                        },
+                        onSelectedItemChange = {},
                         modifier = Modifier.weight(2f),
                         enabled = enabled,
                         format = quantityFormat,
                         style = style,
                         semantics = quantitySemantics,
-                        isInfinity = false
+                        isInfinity = false,
+                        onSelectionSettled = { quantity ->
+                            if (quantity != state.selectedQuantity) {
+                                commit(
+                                    items.repairedSelectionAfterQuantity(
+                                        currentSelection = state.selectedSelection,
+                                        quantity = quantity
+                                    )
+                                )
+                            }
+                        }
                     )
 
-                    QuantityUnitColumn.UNIT -> Picker(
+                    QuantityUnitColumn.UNIT -> WheelPicker(
                         items = items.unitItems,
                         selectedItem = state.selectedUnit,
-                        onSelectedItemChange = { unit ->
-                            commit(
-                                items.repairedSelectionAfterUnit(
-                                    currentSelection = state.selectedSelection,
-                                    unit = unit
-                                )
-                            )
-                        },
+                        onSelectedItemChange = {},
                         modifier = Modifier.weight(1f),
                         enabled = enabled,
                         format = unitFormat,
                         style = style,
                         semantics = unitSemantics,
-                        isInfinity = false
+                        isInfinity = false,
+                        onSelectionSettled = { unit ->
+                            if (unit != state.selectedUnit) {
+                                commit(
+                                    items.repairedSelectionAfterUnit(
+                                        currentSelection = state.selectedSelection,
+                                        unit = unit
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
             }

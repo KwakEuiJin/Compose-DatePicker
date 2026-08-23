@@ -50,7 +50,7 @@ import kotlinx.datetime.LocalDate
  * @param semantics Accessibility labels for the start and end pickers.
  */
 @Composable
-fun DateRangePicker(
+public fun DateRangePicker(
     modifier: Modifier = Modifier,
     pickerModifier: Modifier = Modifier,
     state: DateRangePickerState = rememberDateRangePickerState(),

@@ -17,17 +17,22 @@ Compose-Pickers (formerly Compose-DateTimePicker) is a Kotlin Multiplatform libr
 
 ### Component Hierarchy
 
-The library follows a **composition-based architecture** with a single generic `Picker<T>` component as the foundation:
+The library follows a **composition-based architecture** with a single generic wheel component as the foundation:
 
 ```
-Picker<T> (generic scrollable picker)
-  ↓ composed into
-TimePicker (hour + minute + optional AM/PM)
-YearMonthPicker (year + month)
-DatePicker (year + month + day)
+PickerImpl (private rendering + interaction core)
+  ├─ WheelPicker<T>  (public: live onSelectedItemChange + onSelectionSettled)
+  └─ Picker<T>       (internal: settled-only, used by the composite pickers)
+       ↓ composed into
+     TimePicker (hour + minute + optional AM/PM)
+     YearMonthPicker (year + month)
+     DatePicker (year + month + day)
+     DateRangePicker, DurationPicker
 ```
 
-**Key pattern**: Higher-level components (`TimePicker`, `YearMonthPicker`) are compositions of multiple controlled `Picker` instances, not subclasses. Generic `Picker<T>` receives `selectedItem` and `onSelectedItemChange` from the caller; higher-level state classes own only logical date/time values.
+**Key pattern**: Higher-level components (`TimePicker`, `YearMonthPicker`) are compositions of multiple controlled picker instances, not subclasses. The generic picker receives `selectedItem` and a selection callback from the caller; higher-level state classes own only logical date/time values.
+
+`Picker` is deliberately `internal`: composite pickers rebuild dependent columns from one logical selection, so they must not observe a value that is still moving. Apps get the same contract from `WheelPicker` by leaving `onSelectedItemChange` empty and handling `onSelectionSettled`. Do not re-expose `Picker`.
 
 ### Core Components
 
@@ -71,15 +76,13 @@ User scrolls LazyColumn
 
 ```
 pickers/src/
-├── commonMain/kotlin/    # Shared UI and logic
-├── androidMain/          # Android-specific (UI tooling preview)
-├── iosMain/              # iOS-specific (currently minimal)
-├── desktopMain/          # Desktop-specific (currently minimal)
-├── jsMain/               # Web-specific source set directory, currently minimal
-└── commonTest/           # Shared unit tests
+├── commonMain/kotlin/    # Shared UI and logic - all of it
+├── androidMain/          # AndroidManifest.xml only, no Kotlin sources
+├── commonTest/           # Shared unit tests
+└── androidUnitTest/      # Robolectric component UI tests
 ```
 
-Most logic lives in `commonMain`. Platform-specific code is minimal.
+All logic lives in `commonMain`, including the `@Preview` composables, which compile against the multiplatform `ui-tooling-preview`. There is no platform-specific Kotlin code, so `iosMain`, `desktopMain`, and `jsMain` were removed in `0.8.0`. Add a platform source set back only when it holds an actual `actual` declaration.
 
 ## Development Commands
 
@@ -90,8 +93,8 @@ Most logic lives in `commonMain`. Platform-specific code is minimal.
 - For long autonomous improvement runs, keep one PR-sized slice active at a time. Prefer a separate worktree from `origin/main` when the current checkout has dirty feature work, and do not mix agent workflow assets with picker product changes unless the maintainer explicitly asks for workflow assets.
 - In autonomous improvement runs, a PR-sized slice is not complete until it has its own commit(s), pushed `feature/*` branch, opened PR, and merge attempt after local verification. For these autonomous merges, use GitHub's `mergeable` value as the merge gate: proceed when it reports `MERGEABLE` and the branch has passed the relevant local verification. Do not wait for hosted PR automation or `mergeStateStatus == CLEAN` when PR automation is disabled or intentionally omitted. If merge is blocked, record the blocker and continue with the next actionable slice only after the blocker is explicit.
 - After a substantial implementation step, run a six-agent feedback loop when the maintainer asks for autonomous improvement work: collect feedback, fix actionable issues, verify again, then open or update the PR.
-- Hosted GitHub Actions PR automation is intentionally disabled while the matrix is too slow. Merge PRs after relevant local verification passes and GitHub reports the PR as `MERGEABLE`; run the manual `workflow_dispatch` CI only when hosted evidence is explicitly requested.
-- The one exception is `.github/workflows/screenshot-test.yml`, which runs `:screenshot-tests:validateDebugScreenshotTest` on pull requests. It needs no emulator or device, so it is cheap enough to guard every PR that can change how the pickers render, and it is the only automatic check that the reference images reproduce on a host other than the one that recorded them. Keep it out of the slow matrix; do not add emulator or multiplatform work to it.
+- Two workflows run automatically on every PR to `main` and together form the required hosted gate: `pr-verification.yml` (diff hygiene, `:pickers:desktopTest`, `:pickers:testDebugUnitTest`, `:sample:compileDebugKotlinAndroid`, `:pickers:checkKotlinAbi`) and `screenshot-test.yml` (`:screenshot-tests:validateDebugScreenshotTest`). The full multiplatform/emulator matrix in `integration-build-test.yml` stays `workflow_dispatch`-only because it is too slow for every push; run it when hosted iOS, Wasm, or managed-device evidence is explicitly requested. Merge PRs once both automatic workflows pass, relevant local verification passes, and GitHub reports the PR as `MERGEABLE`.
+- `.github/workflows/screenshot-test.yml` needs no emulator or device, so it is cheap enough to guard every PR that can change how the pickers render. It must stay on a macOS runner: the reference images only reproduce on a host that renders like the one that recorded them, and the same validation on a Linux runner fails all of them. Keep it out of the slow matrix; do not add emulator or multiplatform work to it.
 - Keep improving toward Android developer ergonomics first: state APIs, sample usability, documentation clarity, accessibility, and predictable behavior in real app lifecycles.
 - Before adding custom performance machinery, verify that the standard Compose/runtime primitives are insufficient. Prefer `remember`, `derivedStateOf`, `snapshotFlow`, stable object ownership, and domain helpers before introducing bespoke caches or dirty-check classes. If the reason is performance, record the measured or directly inspected evidence in the PR.
 - Treat bespoke caching, manual invalidation, synchronization, and equality-key logic as high-risk code. If such code remains, add focused regression coverage for stale data, source identity changes, non-default column orders, and state changes that should invalidate derived values. Private code still needs tests when it replaces framework guarantees.
@@ -122,6 +125,12 @@ Most logic lives in `commonMain`. Platform-specific code is minimal.
 - When higher-level components pass semantics labels to `Picker`, expose them through component-specific semantics option objects with sensible defaults so Android apps can localize TalkBack output. Update KDoc and both READMEs in the same PR.
 - Kotlin 2.4.10 ABI validation uses `checkKotlinAbi`/`updateKotlinAbi` in this repo. The former `checkLegacyAbi`/`updateLegacyAbi` names still resolve but are deprecated aliases. Also note the DSL change: `abiValidation { }` now enables validation on its own and the `enabled` property was removed. Re-check task names and dump format after Kotlin upgrades.
 - The build runs AGP 9 in compatibility mode: `android.builtInKotlin=false` and `android.newDsl=false` in `gradle.properties`. Both are required because AGP 9 forbids `org.jetbrains.kotlin.multiplatform` together with `com.android.library`/`com.android.application`, which is how `:pickers` and `:sample` are structured, and `org.jetbrains.kotlin.android` (used by `:benchmark`/`:benchmark-app`) is incompatible with the new DSL. AGP 10 removes both flags, so revisit when KMP supports the AGP 9 DSL — `:pickers` would move to `com.android.kotlin.multiplatform.library` and the Android app part of `:sample` would need its own non-KMP subproject.
+- `:pickers` uses Kotlin explicit API mode. New public declarations must spell out `public` and their return type; do not disable the mode to avoid writing them.
+- Keep the published API surface to what apps actually call. Before adding a public symbol, check that it is not an internal default (like the former `*_RANGE` lists), a generated artifact (like the Compose resources `Res` class), or a helper with no caller. The `util` package was removed in `0.8.0` for exactly these reasons; do not reintroduce a catch-all package.
+- Time-reading helpers must take an explicit `timeZone` parameter defaulting to `TimeZone.currentSystemDefault()` rather than hard-coding the system zone.
+- Dependencies that must not reach consumers of the release artifact go in `debugImplementation`, not in `androidMain`. After changing dependencies, run `:pickers:publishToMavenLocal` and read the generated POM's `dependencies` block before assuming the change is contained.
+- `compose-material3` is a deliberate transitive dependency: `PickerDefaults` reads `LocalContentColor` and `LocalTextStyle` so defaults follow the host `MaterialTheme`, and foundation has no replacement. Removing it would break dark-theme defaults. Use `BasicText` rather than material3 `Text` wherever the picker has already resolved style and color.
+- Record what the library promises about API stability in `docs/product/api-stability-policy.md`, and give every breaking release a migration document under `docs/migration/`.
 - Treat `pickers/api/` as committed release-gate data. Public API changes must include reviewed ABI dump updates, and reviewers should separate intended picker/state API changes from preview/generated resource churn.
 - Keep `@Preview` composables private tooling code so sample previews do not become part of the supported public API surface. Reject ABI dump changes that add `*Preview` symbols back to `pickers/api/`. If accidental preview symbols are removed from ABI dumps, call out the compatibility impact in the PR and release notes.
 - Distinguish the latest public Maven Central/GitHub Release version from the repository `VERSION_NAME`. Before changing README install snippets, verify the public release and do not point copy-paste dependency examples at unpublished versions unless the docs explicitly mark them as unreleased/local-publish usage.
@@ -185,6 +194,9 @@ git diff --check origin/main...HEAD
 
 # Update the Kotlin ABI reference dump after an intentional public API change
 ./gradlew :pickers:updateKotlinAbi --no-daemon
+
+# Generate the Dokka API reference (also fills the published javadoc jar)
+./gradlew :pickers:dokkaGeneratePublicationHtml --no-daemon
 
 # Verify sample app compilation
 ./gradlew :sample:compileKotlinDesktop --no-daemon
@@ -268,6 +280,7 @@ color = lerp(selectedTextStyle.color, textStyle.color, fraction)
 - Library Android component UI tests that do not need a real Activity/app journey → `pickers/src/androidUnitTest/kotlin/` with Robolectric
 - Library Android instrumented tests that must run on a device/emulator → `pickers/src/androidInstrumentedTest/kotlin/`
 - Sample Android smoke tests → `sample/src/androidInstrumentedTest/kotlin/`
+- Compose screenshot references only reproduce on a host that renders like the one that recorded them, which is why `screenshot-test.yml` runs on macOS. Do not move that job to a Linux runner, and do not raise `imageDifferenceThreshold` to make a cross-host run pass: the setting counts differing pixels without a per-pixel tolerance, so a threshold large enough for host noise also hides real regressions. `docs/testing/compose-screenshot-tests.md` has the measurements.
 - Visual regression cases → `screenshot-tests/src/screenshotTest/kotlin/` (Android-only host module; the screenshot plugin does not support KMP modules, so never apply it to `:pickers` or `:sample`)
 - Use `:pickers:testDebugUnitTest` (or `:pickers:test`) for library Robolectric component UI tests; AGP 9 no longer registers a release unit test variant. Use `:sample:assembleDebugAndroidTest` to verify sample Android test APK compilation/packaging. Use `:sample:pixel2Api35DebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect` for the Gradle Managed Device path used by CI; it requires Android Emulator, the API 35 AOSP ATD system image for the host architecture, and local virtualization/KVM. Use `:sample:connectedDebugAndroidTest` when a local device or emulator is already available. If managed-device prerequisites are unavailable locally, run `assembleDebugAndroidTest` or a managed-device `--dry-run` and rely on CI for the actual emulator run.
 - Public Kotlin API/ABI changes → run `:pickers:checkKotlinAbi`. If the API change is intentional and SemVer-appropriate, run `:pickers:updateKotlinAbi`, commit the updated `pickers/api/` dumps, and review preview/generated resource changes separately from supported picker/state API changes.
@@ -292,7 +305,9 @@ Follow **Semantic Versioning**: MAJOR.MINOR.PATCH
 ## CI/CD
 
 GitHub Actions workflows:
-- **`integration-build-test.yml`**: Manual-only (`workflow_dispatch`) hosted verification. PR automation is commented out because the full multiplatform/emulator matrix is slow. Prefer local gates first: `git diff --check origin/main...HEAD`, targeted Gradle tests, `checkKotlinAbi` for public API changes, and sample compilation. Trigger the hosted workflow only when explicit hosted evidence is needed.
+- **`pr-verification.yml`**: Runs on every `pull_request` to `main`. Three jobs: repository hygiene (`git diff --check`), Linux tests (`:pickers:desktopTest`, `:pickers:testDebugUnitTest`, `:sample:compileDebugKotlinAndroid`), and the public API gate (`:pickers:checkKotlinAbi` on macOS, because the klib dump covers the iOS targets).
+- **`screenshot-test.yml`**: Runs `:screenshot-tests:validateDebugScreenshotTest` on every `pull_request` that touches `pickers/`, `screenshot-tests/`, or the Gradle configuration. macOS runner, for the reason in `docs/testing/compose-screenshot-tests.md`.
+- **`integration-build-test.yml`**: Manual-only (`workflow_dispatch`) full matrix, including iOS, Wasm, and the managed-device instrumented tests. Too slow for every push, so trigger it when hosted evidence for those targets is explicitly needed. Local gates still come first: `git diff --check origin/main...HEAD`, targeted Gradle tests, `checkKotlinAbi` for public API changes, and sample compilation.
 - **`maven-central-deploy.yml`**: Publishes releases to Maven Central
 
 Build matrix: Ubuntu latest for Android/Desktop/Wasm and macOS 14 for iOS, using JDK 17 (Temurin)

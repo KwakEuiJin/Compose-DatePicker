@@ -45,9 +45,9 @@ import io.github.kezlab.compose.pickers.sample.getMonthName
 import io.github.kezlab.compose.pickers.sample.getTimePeriodContentDescription
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.currentDate
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.currentDate
+import io.github.kezlab.compose.pickers.currentDateTime
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Calendar
 import compose.icons.feathericons.Clock

@@ -85,7 +85,8 @@ presets, dependent quantity/unit and date-time contracts, bottom sheet integrati
 ```
 
 The same app is deployed to [GitHub Pages](https://kez-lab.org/Compose-Pickers/) on every push to `main`, so you can try the
-pickers without building anything.
+pickers without building anything. The generated
+[API reference](https://kez-lab.org/Compose-Pickers/api/) is published from the same build.
 
 <p align="center">
   <img src="docs/images/sample/sample-duration-picker.png" alt="DurationPicker sample screen" width="23%" />
@@ -120,9 +121,31 @@ dependencies {
 }
 ```
 
-> **Release status:** The examples on `main` target the unreleased `0.8.0` API. It renames every Kotlin import from `com.kez.picker` to `io.github.kezlab.compose.pickers` and provides no compatibility layer. The latest published artifact is `io.github.kez-lab:compose-pickers:0.7.0`, which still uses the old imports. Use the `0.7.0` tag for documentation that exactly matches that release.
+> **Release status:** The examples on `main` target the unreleased `0.8.0` API, which is a hard
+> breaking change with no compatibility layer: every Kotlin import moves from `com.kez.picker` to
+> `io.github.kezlab.compose.pickers`, the generic `Picker` composable is gone in favour of
+> `WheelPicker`, and the `util` package no longer exists. The latest published artifact is
+> `io.github.kez-lab:compose-pickers:0.7.0`. Use the `0.7.0` tag for documentation that exactly
+> matches that release, or `./gradlew :pickers:publishToMavenLocal` to try `0.8.0` locally.
 
-For release notes and upgrade-impact details, see [CHANGELOG.md](CHANGELOG.md).
+[Migrating from 0.7.0](docs/migration/0.7-to-0.8.md) lists every rename and the mechanical steps to
+apply them. For release notes and upgrade-impact details, see [CHANGELOG.md](CHANGELOG.md). What the
+library promises about API stability is in
+[docs/product/api-stability-policy.md](docs/product/api-stability-policy.md).
+
+### Dependencies
+
+The artifact exposes Compose runtime, foundation, and UI plus `kotlinx-datetime` and
+`kotlinx-collections-immutable` as `api` dependencies, because they appear in the public API
+(`LocalDate`, `LocalTime`, `Duration`, `ImmutableList`).
+
+It also pulls in **`compose-material3`** transitively. No material3 type appears in the public API,
+but `PickerDefaults.colors(...)` and `PickerDefaults.textStyles(...)` read `LocalContentColor` and
+`LocalTextStyle` from it, which is how default picker colors and text styles follow the host
+`MaterialTheme` including dark theme. Apps that do not use material3 still work: pass an explicit
+`PickerStyle` and the defaults are never read.
+
+The Android Studio preview renderer (`ui-tooling`) is **not** published with the release artifact.
 
 ## Usage
 
@@ -162,8 +185,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.currentDateTime
 
 @Composable
 fun TimePicker24hExample() {
@@ -191,8 +214,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.currentDateTime
 
 @Composable
 fun TimePicker12hExample() {
@@ -350,7 +373,7 @@ import androidx.compose.runtime.remember
 import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.DatePicker
 import io.github.kezlab.compose.pickers.date.rememberDatePickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
@@ -415,7 +438,7 @@ import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.DateRange
 import io.github.kezlab.compose.pickers.date.DateRangePicker
 import io.github.kezlab.compose.pickers.date.rememberDateRangePickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -457,7 +480,7 @@ import io.github.kezlab.compose.pickers.PickerDefaults
 import io.github.kezlab.compose.pickers.date.YearMonth
 import io.github.kezlab.compose.pickers.date.YearMonthPicker
 import io.github.kezlab.compose.pickers.date.rememberYearMonthPickerState
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 
 @Composable
 fun YearMonthPickerExample() {
@@ -603,7 +626,7 @@ as "1 hour", "January", or "PM".
 
 Semantics options customize the structural picker-column label and previous/next action labels.
 Selection is exposed through Compose `selected` semantics rather than appended as a hardcoded English
-phrase. Use `PickerDefaults.itemFormat(...)` on a generic `Picker<T>`, or
+phrase. Use `PickerDefaults.itemFormat(...)` on a generic `WheelPicker<T>`, or
 `PickerDefaults.timePickerFormat(...)`, `durationPickerFormat(...)`, `datePickerFormat(...)`, and
 `yearMonthPickerFormat(...)` for composite picker values. Use `PickerDefaults.semantics(...)`,
 `timePickerSemantics(...)`, `durationPickerSemantics(...)`, `datePickerSemantics(...)`, or
@@ -672,10 +695,9 @@ user scrolling, item clicks, or semantics actions move a different item into the
 the appropriate place to start an expensive query or commit a preview. App-driven `selectedItem`
 changes move the wheel without invoking either callback.
 
-The existing `Picker<T>` remains available for compatibility. Its `onSelectedItemChange` callback
-runs only after interaction settles; it does not expose live centered-item changes. Composite
-temporal pickers continue to use this settled contract so dependent columns do not rebuild while a
-neighboring column is still scrolling.
+To react only to settled selections, leave `onSelectedItemChange` empty and handle
+`onSelectionSettled`. Composite temporal pickers use exactly that contract internally, so a
+dependent column never rebuilds while a neighboring column is still scrolling.
 
 For both APIs, `items` must be non-empty and distinct, and `selectedItem` must exist in `items`. If
 `items` can change, update or coerce the
@@ -710,8 +732,8 @@ dividers, item padding, selected item background, and fading edge behavior with 
 Use `format.itemText` for visible text and `format.itemContentDescription` for screen-reader value
 text when those two strings should differ.
 
-`PickerStyle` groups the visual settings that can be shared across `WheelPicker`, `Picker`, and
-composite pickers:
+`PickerStyle` groups the visual settings that can be shared across `WheelPicker` and composite
+pickers:
 
 | Option | Use it for |
 | :--- | :--- |
@@ -722,9 +744,9 @@ composite pickers:
 | `itemPadding` | Padding applied around each rendered item. |
 | `fadingEdgeGradient` | Top/bottom fading edge mask. |
 | `horizontalAlignment` | Horizontal alignment of item content inside each column. |
-| `dividerThickness`, `dividerShape`, `dividerWidth`, `isDividerVisible` | Standalone `WheelPicker` / `Picker` selection divider settings. Composite pickers use `selectionIndicator` for the shared band. |
+| `dividerThickness`, `dividerShape`, `dividerWidth`, `isDividerVisible` | Standalone `WheelPicker` selection divider settings. Composite pickers use `selectionIndicator` for the shared band. |
 
-For a standalone `Picker`, control the selection divider length with `dividerWidth`. Use
+For a standalone `WheelPicker`, control the selection divider length with `dividerWidth`. Use
 `PickerDividerWidth.Fill` (default) to span the full column width, `PickerDividerWidth.Fraction(0f..1f)`
 for a proportional length, or `PickerDividerWidth.Fixed(Dp)` for an absolute length. The divider stays
 centered horizontally. `Fraction` accepts only values in `0f..1f`; `Fixed` width must be a finite,
@@ -791,7 +813,7 @@ recreate the state just to reset the selection.
 
 | State | Method |
 | :--- | :--- |
-| Generic `WheelPicker<T>` / `Picker<T>` | Update the app-owned `selectedItem` value |
+| Generic `WheelPicker<T>` | Update the app-owned `selectedItem` value |
 | `time.TimePickerState` | `selectTime(LocalTime(...))`, `selectTime(hour, minute)`, or the matching `items` overloads |
 | `duration.DurationPickerState` | `selectDuration(Duration)`, `selectDuration(hours, minutes)`, or the matching `items` overloads |
 | `date.DatePickerState` | `selectDate(LocalDate(...))`, `selectDate(year, month, day)`, or the matching `items` overloads |

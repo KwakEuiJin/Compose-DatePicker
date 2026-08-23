@@ -6,6 +6,26 @@ This project tracks notable user-facing and maintainer-facing changes here. The 
 
 ### Changed (Breaking)
 
+- Removed the public generic `Picker` composable. `WheelPicker` covers the same ground: leaving
+  `onSelectedItemChange` empty and handling `onSelectionSettled` reproduces `Picker`'s settled-only
+  contract exactly. Replacing `Picker` with `WheelPicker` without moving the callback changes
+  behavior, because `WheelPicker.onSelectedItemChange` fires live during scroll. `Picker` remains as
+  the internal entry point the composite pickers use, since dependent columns must not observe a
+  value that is still moving. See [docs/migration/0.7-to-0.8.md](docs/migration/0.7-to-0.8.md).
+- Removed the `io.github.kezlab.compose.pickers.util` package from the public API. `TimeFormat` and
+  `TimePeriod` move to `io.github.kezlab.compose.pickers.time`, next to the component that consumes
+  them. `currentDate` and `currentDateTime` move to the root package. `currentYear`, `currentMonth`,
+  `currentHour`, `currentMinute` and the six `*_RANGE` lists are gone: the first four had no caller
+  anywhere in the library, sample, tests, or docs, and the ranges were only ever the private default
+  item lists inside `PickerDefaults`.
+- `currentDate` and `currentDateTime` take a `timeZone` parameter defaulting to
+  `TimeZone.currentSystemDefault()`. They previously hard-coded the system zone with no way to
+  override it, which is wrong for pickers that represent time in a fixed or user-selected zone.
+  Existing call sites keep their behavior.
+- Stopped generating the Compose resources `Res` class. The module has no `composeResources`
+  directory, so `publicResClass = true` was publishing an empty `Res` object plus five
+  `all*Resources` collections into the klib ABI. Nothing in the library referenced them.
+
 - Dropped the `iosX64` (Intel Mac simulator) target. Compose Multiplatform stopped publishing
   `ios_x64` and `macos_x64` artifacts in `1.11.0`, so the library can no longer build that target.
   The published iOS targets are now `iosArm64` (device) and `iosSimulatorArm64` (Apple Silicon
@@ -17,6 +37,43 @@ This project tracks notable user-facing and maintainer-facing changes here. The 
   Android library namespaces, sample and benchmark application IDs, source paths, tests, and ABI
   reference dumps use the new namespace as well. No compatibility typealiases or deprecated old
   packages are provided: update all imports when moving to `0.8.0`.
+
+### Changed
+
+- The published release artifact no longer carries the Android Studio preview renderer.
+  `compose.ui.tooling` moves to `debugImplementation` and the redundant
+  `androidx.ui.tooling.preview` dependency is dropped: `androidMain` has no Kotlin sources, and the
+  `@Preview` composables live in `commonMain` where they compile against the multiplatform
+  `ui-tooling-preview`. `compose-material3` stays a transitive dependency and is now documented as
+  one - `PickerDefaults` reads `LocalContentColor` and `LocalTextStyle` from it so defaults follow
+  the host `MaterialTheme`, and foundation has no replacement for that.
+- Picker items render with `BasicText` instead of material3 `Text`. The interpolated color and font
+  size are already resolved into `itemTextStyle`, so the material3 wrapper only re-derived them. The
+  committed screenshot references are unchanged, which confirms the swap is pixel-identical.
+- Dropped the unused `kotlinx-serialization` plugin, `binaries.executable()` from the `wasmJs`
+  library target, the empty per-target dependency blocks, the `jsMain` source set that never had a
+  matching Kotlin target, and a `release` build type whose `proguardFiles` pointed at a
+  non-existent file and would not have applied to consumers anyway.
+
+### Added
+
+- `:pickers` builds with Kotlin explicit API mode, so a declaration can no longer join the published
+  API by defaulting to public.
+- The javadoc jar now contains the real KDoc. Dokka `2.2.0` generates it, and the same HTML is
+  published to GitHub Pages under [`/api/`](https://kez-lab.org/Compose-Pickers/api/) alongside the
+  Wasm demo. Previously the jar held nothing but a manifest.
+- `pr-verification.yml` runs the fast verification subset on every pull request: diff hygiene,
+  `:pickers:desktopTest`, `:pickers:testDebugUnitTest`, `:sample:compileDebugKotlinAndroid`, and
+  `:pickers:checkKotlinAbi`. Apart from `screenshot-test.yml`, hosted PR automation was disabled,
+  which meant a public API change could merge without the ABI gate running. Screenshot validation
+  stays in `screenshot-test.yml` on its macOS runner; `docs/testing/compose-screenshot-tests.md`
+  now records the measurements showing why it cannot move to a Linux runner and why raising
+  `imageDifferenceThreshold` is not an alternative.
+- [`docs/product/api-stability-policy.md`](docs/product/api-stability-policy.md) states what counts
+  as public API, what `0.x` versus `1.0.0` promises, and which platform and toolchain changes are
+  treated as breaking.
+- [`docs/migration/0.7-to-0.8.md`](docs/migration/0.7-to-0.8.md) lists every rename in this release
+  and the one behavior change that a mechanical replacement would miss.
 
 ### Changed
 

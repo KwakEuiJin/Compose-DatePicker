@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.compose)           // org.jetbrains.compose
     alias(libs.plugins.compose.compiler)  // org.jetbrains.kotlin.plugin.compose (K2)
     alias(libs.plugins.vanniktech.maven)
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.dokka)
 }
 
 kotlin {
@@ -17,6 +17,10 @@ kotlin {
     @OptIn(ExperimentalAbiValidation::class)
     abiValidation {
     }
+
+    // Every public declaration must spell out its visibility and return type, so nothing reaches
+    // the published API by defaulting to public.
+    explicitApi()
 
     jvmToolchain(17)
 
@@ -33,10 +37,10 @@ kotlin {
 
     jvm("desktop")
 
+    // Library target only: no `binaries.executable()`, which belongs to applications.
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
-        binaries.executable()
     }
 
     sourceSets {
@@ -48,9 +52,12 @@ kotlin {
             api(libs.kotlinx.collections.immutable)
             api(libs.kotlinx.datetime)
 
+            // material3 supplies LocalContentColor / LocalTextStyle, which PickerDefaults reads so
+            // that default picker colors and text styles follow the host MaterialTheme (including
+            // dark theme). No material3 type appears in the public API, so this stays
+            // `implementation`. See README "Dependencies".
             implementation(libs.compose.material3)
             implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.compose.components.resources)
             implementation(libs.kotlinx.coroutines.core)
         }
 
@@ -58,11 +65,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
             }
-        }
-
-        androidMain.dependencies {
-            implementation(libs.compose.ui.tooling)
-            implementation(libs.androidx.ui.tooling.preview)
         }
 
         val androidInstrumentedTest by getting {
@@ -78,25 +80,20 @@ kotlin {
                 implementation(libs.robolectric)
             }
         }
-
-        iosMain.dependencies {
-
-        }
-
-        wasmJsMain.dependencies {
-
-        }
-
-        val desktopMain by getting {
-            dependencies {
-
-            }
-        }
     }
 }
 
 dependencies {
+    // Tooling that must never reach consumers of the published release artifact: the Android
+    // Studio preview renderer and the test manifest are debug-only.
+    debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.androidx.uitest.testManifest)
+}
+
+dokka {
+    // Names the published API reference and the javadoc jar contents after the library, not the
+    // Gradle project directory.
+    moduleName.set("compose-pickers")
 }
 
 android {
@@ -106,16 +103,6 @@ android {
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
 
     compileOptions {
@@ -141,12 +128,4 @@ android {
     }
 
     buildFeatures { compose = true }
-}
-
-// Optional JetBrains Compose resource generation settings.
-compose {
-    resources {
-        publicResClass = true
-        packageOfResClass = "io.github.kezlab.compose.pickers.resources"
-    }
 }

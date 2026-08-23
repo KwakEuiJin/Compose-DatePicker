@@ -1,6 +1,6 @@
 package io.github.kezlab.compose.pickers.sample
 
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalTime
 
 /**
