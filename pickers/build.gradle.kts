@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose)           // org.jetbrains.compose
     alias(libs.plugins.compose.compiler)  // org.jetbrains.kotlin.plugin.compose (K2)
     alias(libs.plugins.vanniktech.maven)
+    alias(libs.plugins.dokka)
 }
 
 kotlin {
@@ -87,6 +88,12 @@ dependencies {
     // Studio preview renderer and the test manifest are debug-only.
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.androidx.uitest.testManifest)
+}
+
+dokka {
+    // Names the published API reference and the javadoc jar contents after the library, not the
+    // Gradle project directory.
+    moduleName.set("compose-pickers")
 }
 
 android {
