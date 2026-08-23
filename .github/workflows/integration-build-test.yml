@@ -1,11 +1,10 @@
 name: CI - Compose Multiplatform TimePicker (Build & Test)
 
 on:
-  # Hosted PR CI is intentionally disabled for now because the full
-  # multiplatform/emulator matrix is slow. Run the same gates locally and use
-  # this workflow manually only when hosted evidence is explicitly needed.
-  # pull_request:
-  #   branches: [ main ]
+  # This workflow stays manual: the full multiplatform/emulator matrix is too slow to run on every
+  # push. The fast subset that every PR must pass - diff hygiene, non-emulator tests, and the
+  # Kotlin ABI gate - runs automatically in pr-verification.yml. Trigger this one when hosted
+  # evidence for iOS, Wasm, or the managed-device instrumented tests is explicitly needed.
   workflow_dispatch:
     inputs:
       base_ref:
