@@ -27,7 +27,7 @@ import io.github.kezlab.compose.pickers.date.YearMonthPicker
 import io.github.kezlab.compose.pickers.date.rememberYearMonthPickerState
 import io.github.kezlab.compose.pickers.sample.getMonthContentDescription
 import io.github.kezlab.compose.pickers.sample.getMonthName
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Calendar
 import kotlinx.datetime.number

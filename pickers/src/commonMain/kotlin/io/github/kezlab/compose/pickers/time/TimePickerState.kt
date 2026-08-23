@@ -12,9 +12,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.setValue
 import io.github.kezlab.compose.pickers.TimePickerItems
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
-import io.github.kezlab.compose.pickers.util.currentDateTime
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
+import io.github.kezlab.compose.pickers.currentDateTime
 import kotlinx.datetime.LocalTime
 
 /**

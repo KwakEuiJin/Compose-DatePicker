@@ -2,8 +2,8 @@ package io.github.kezlab.compose.pickers.time
 
 import io.github.kezlab.compose.pickers.TimePickerItems
 import io.github.kezlab.compose.pickers.closestPickerValueTo
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalTime
 
 /**

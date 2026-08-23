@@ -3,8 +3,8 @@ package io.github.kezlab.compose.pickers
 import io.github.kezlab.compose.pickers.date.DateRange
 import io.github.kezlab.compose.pickers.date.YearMonth
 import io.github.kezlab.compose.pickers.date.daysInMonth
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month

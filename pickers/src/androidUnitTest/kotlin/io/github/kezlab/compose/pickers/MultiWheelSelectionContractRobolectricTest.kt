@@ -13,7 +13,7 @@ import io.github.kezlab.compose.pickers.date.rememberDatePickerState
 import io.github.kezlab.compose.pickers.time.TimePicker
 import io.github.kezlab.compose.pickers.time.TimePickerState
 import io.github.kezlab.compose.pickers.time.rememberTimePickerState
-import io.github.kezlab.compose.pickers.util.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimeFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.Assert.assertEquals

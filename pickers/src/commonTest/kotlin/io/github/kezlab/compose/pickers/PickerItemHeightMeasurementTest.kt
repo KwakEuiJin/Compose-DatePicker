@@ -1,6 +1,6 @@
 package io.github.kezlab.compose.pickers
 
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,7 +1,7 @@
 package io.github.kezlab.compose.pickers
 
 import androidx.compose.runtime.Immutable
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimePeriod
 
 /**
  * Value formatting for one [Picker] column.

@@ -4,7 +4,7 @@ import io.github.kezlab.compose.pickers.date.YearMonthPickerState
 import io.github.kezlab.compose.pickers.date.validateYearMonthPickerItems
 import io.github.kezlab.compose.pickers.time.TimePickerState
 import io.github.kezlab.compose.pickers.time.validateTimePickerItems
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimePeriod
 
 internal fun validateTimePickerItems(
     state: TimePickerState,

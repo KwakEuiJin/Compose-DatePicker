@@ -31,7 +31,7 @@ import io.github.kezlab.compose.pickers.TimePickerItems
 import io.github.kezlab.compose.pickers.maxPickerItemHeight
 import io.github.kezlab.compose.pickers.pickerColumnModifier
 import io.github.kezlab.compose.pickers.rememberPickerItemHeight
-import io.github.kezlab.compose.pickers.util.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimeFormat
 import kotlinx.datetime.LocalTime
 
 /**

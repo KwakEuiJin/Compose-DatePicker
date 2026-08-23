@@ -14,13 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.kezlab.compose.pickers.util.DAY_RANGE
-import io.github.kezlab.compose.pickers.util.HOUR12_RANGE
-import io.github.kezlab.compose.pickers.util.HOUR24_RANGE
-import io.github.kezlab.compose.pickers.util.MINUTE_RANGE
-import io.github.kezlab.compose.pickers.util.MONTH_RANGE
-import io.github.kezlab.compose.pickers.util.TimePeriod
-import io.github.kezlab.compose.pickers.util.YEAR_RANGE
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import io.github.kezlab.compose.pickers.date.YearMonth
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -34,6 +28,24 @@ private const val DISABLED_CONTAINER_ALPHA: Float = 0.12f
 private const val DEFAULT_INTEGER_ITEM_HEIGHT_PROBE_TEXT = "0123456789"
 private const val DEFAULT_PERIOD_ITEM_HEIGHT_PROBE_TEXT = "AMPM"
 private val DEFAULT_DURATION_HOUR_ITEMS = (0..23).toList()
+
+/** Year values offered by the default year column (1000-9999). */
+private val YEAR_RANGE = (1000..9999).toList()
+
+/** Month numbers offered by the default month column (1-12). */
+private val MONTH_RANGE = (1..12).toList()
+
+/** Day-of-month values offered by the default day column (1-31). */
+private val DAY_RANGE = (1..31).toList()
+
+/** Hour values offered by the default 24-hour column (0-23). */
+private val HOUR24_RANGE = (0..23).toList()
+
+/** Hour values offered by the default 12-hour column (1-12). */
+private val HOUR12_RANGE = (1..12).toList()
+
+/** Minute values offered by the default minute column (0-59). */
+private val MINUTE_RANGE = (0..59).toList()
 
 private val DefaultIntegerItemText: (Int) -> String = { it.toString() }
 private val DefaultPeriodItemText: (TimePeriod) -> String = { it.name }

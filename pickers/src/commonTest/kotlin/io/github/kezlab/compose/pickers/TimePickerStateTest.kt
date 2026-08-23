@@ -4,8 +4,8 @@ import androidx.compose.runtime.saveable.SaverScope
 import io.github.kezlab.compose.pickers.time.TimePickerState
 import io.github.kezlab.compose.pickers.time.initialHourForTimeFormat
 import io.github.kezlab.compose.pickers.time.validateTimePickerItems
-import io.github.kezlab.compose.pickers.util.TimeFormat
-import io.github.kezlab.compose.pickers.util.TimePeriod
+import io.github.kezlab.compose.pickers.time.TimeFormat
+import io.github.kezlab.compose.pickers.time.TimePeriod
 import kotlinx.datetime.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -7,7 +7,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import io.github.kezlab.compose.pickers.DatePickerItems
-import io.github.kezlab.compose.pickers.util.currentDate
+import io.github.kezlab.compose.pickers.currentDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
