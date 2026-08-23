@@ -1,0 +1,76 @@
+# Compose preview screenshot validation.
+#
+# This runs on pull requests even though the full build/test matrix in
+# integration-build-test.yml is manual-only. That matrix is gated behind
+# workflow_dispatch because the emulator jobs are slow; this job needs no
+# emulator and no device, so it is cheap enough to guard every PR that can
+# change how the pickers render.
+name: CI - Compose Screenshot Test
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'pickers/**'
+      - 'screenshot-tests/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - '.github/workflows/screenshot-test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  screenshot-validation:
+    name: macOS • Compose screenshot validation
+    runs-on: macos-14
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # layoutlib renders text with the fonts shipped in the compileSdk
+      # platform directory, so the platform :screenshot-tests compiles against
+      # must be installed for validation to reproduce the reference images.
+      - name: Install Android build tools
+        run: |
+          sdkmanager "platform-tools" \
+                     "platforms;android-37.0" \
+                     "build-tools;37.0.0"
+          yes | sdkmanager --licenses
+
+      - name: Gradle Validate • Compose screenshot references
+        run: |
+          ./gradlew \
+            :screenshot-tests:validateDebugScreenshotTest \
+            --no-daemon
+
+      - name: Upload Compose screenshot test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-screenshot-test-report
+          # The HTML report links to the rendered and diff images, which live
+          # under build/outputs, so upload both or the report is unreadable.
+          path: |
+            screenshot-tests/build/reports/screenshotTest/**
+            screenshot-tests/build/outputs/screenshotTest-results/**
+          if-no-files-found: ignore

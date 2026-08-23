@@ -47,6 +47,9 @@ delete the orphans in the same commit.
 ```
 
 `:screenshot-tests:check` depends on this task, so the normal verification tasks cover it too.
+`.github/workflows/screenshot-test.yml` also runs it on every pull request that touches `pickers/`,
+`screenshot-tests/`, or the Gradle configuration, which is what catches a reference image that only
+reproduces on the machine that recorded it.
 
 On a mismatch, inspect the local HTML report at
 `screenshot-tests/build/reports/screenshotTest/preview/debug/index.html`. Do not update reference
